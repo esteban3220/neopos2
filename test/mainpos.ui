@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <object class="GtkAdjustment" id="pos_main"></object>
+  <object class="GtkBox" id="box_pos">
+    <property name="orientation">1</property>
+    <child>
+      <object class="GtkStackSwitcher" id="alg">
+        <property name="stack">stack_main_pos</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkStack" id="stack_main_pos">
+        <property name="margin-bottom">10</property>
+        <property name="margin-end">10</property>
+        <property name="margin-start">10</property>
+        <property name="margin-top">10</property>
+        <child>
+          <object class="GtkStackPage">
+            <property name="child">
+              <object class="GtkBox" id="box_pos1">
+                <property name="orientation">1</property>
+                <property name="spacing">10</property>
+                <child>
+                  <object class="GtkBox">
+                    <property name="spacing">5</property>
+                    <child>
+                      <object class="GtkEntry">
+                        <property name="hexpand">true</property>
+                        <property name="primary-icon-name">input-keyboard-symbolic</property>
+                        <property name="placeholder-text">Ingresa un Codigo de Barras.</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkButton">
+                        <property name="icon-name">folder-saved-search-symbolic</property>
+                        <property name="tooltip-text">Busca existencia de producto y/o Precio.</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkButton">
+                        <property name="icon-name">document-page-setup-symbolic</property>
+                        <property name="tooltip-text">Venta en masa o menta por Granel.</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="spacing">5</property>
+                    <child>
+                      <object class="GtkScrolledWindow">
+                        <property name="hexpand">true</property>
+                        <property name="hexpand-set">true</property>
+                        <property name="vexpand">true</property>
+                        <property name="vexpand-set">true</property>
+                        <child>
+                          <object class="GtkTreeView"></object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="orientation">1</property>
+                        <property name="spacing">10</property>
+                        <child>
+                          <object class="GtkBox">
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="halign">1</property>
+                                <property name="label">Usuario</property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="halign">2</property>
+                                <property name="label">Rol</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkFrame">
+                            <property name="child">
+                              <object class="GtkLabel" id="lbl_precio_total">
+                                <property name="label">$ &lt;span font_desc='50'&gt;0.00&lt;/span&gt;</property>
+                                <property name="use-markup">true</property>
+                                <property name="width-chars">0</property>
+                                <property name="width-request">300</property>
+                              </object>
+                            </property>
+                            <property name="label">Total</property>
+                            <property name="vexpand">true</property>
+                            <property name="vexpand-set">true</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkFrame">
+                            <property name="child">
+                              <object class="GtkSpinButton">
+                                <property name="adjustment">pos_main</property>
+                                <property name="margin-bottom">10</property>
+                                <property name="margin-end">10</property>
+                                <property name="margin-start">10</property>
+                              </object>
+                            </property>
+                            <property name="label">Ingreso</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkFrame">
+                            <property name="child">
+                              <object class="GtkLabel">
+                                <property name="label">$&lt;span font_desc='30'&gt;0.00&lt;/span&gt;</property>
+                                <property name="use-markup">true</property>
+                                <property name="margin-bottom">10</property>
+                                <property name="margin-end">10</property>
+                                <property name="margin-start">10</property>
+                              </object>
+                            </property>
+                            <property name="label">Cambio</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkButton">
+                            <property name="icon-name">system-switch-user-symbolic</property>
+                            <property name="label">Pagar</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </property>
+            <property name="title">POS</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkStackPage">
+            <property name="child">
+              <object class="GtkBox">
+                <property name="orientation">1</property>
+                <child>
+                  <object class="GtkScrolledWindow">
+                    <property name="hexpand">true</property>
+                    <property name="hexpand-set">true</property>
+                    <property name="vexpand">true</property>
+                    <property name="vexpand-set">true</property>
+                    <child>
+                      <object class="GtkTreeView" id="tree_prov"></object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="orientation">0</property>
+                    <property name="margin-start">0</property>
+                    <property name="margin-end">5</property>
+                    <child>
+                      <object class="GtkButton">
+                        <property name="margin-bottom">0</property>
+                        <property name="icon-name">list-add-symbolic</property>
+                        <property name="tooltip-text">AÃ±ade un nuevo registro.</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkButton">
+                        <property name="margin-bottom">0</property>
+                        <property name="icon-name">list-remove-symbolic</property>
+                        <property name="tooltip-text">Elimina un registro.</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkButton">
+                        <property name="margin-bottom">0</property>
+                        <property name="icon-name">edit-find-replace-symbolic</property>
+                        <property name="tooltip-text">Edita la celda seleccionada.</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <property name="spacing">5</property>
+              </object>
+            </property>
+            <property name="title">Proveedores</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkStackPage">
+            <property name="child">
+              <object class="GtkBox"></object>
+            </property>
+            <property name="title">Productos</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkStackPage">
+            <property name="child">
+              <object class="GtkBox"></object>
+            </property>
+            <property name="title">Reportes</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkStackPage">
+            <property name="child">
+              <object class="GtkBox"></object>
+            </property>
+            <property name="title">Estadisticas</property>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="GtkRevealer">
+        <property name="child">
+          <object class="GtkInfoBar"></object>
+        </property>
+      </object>
+    </child>
+  </object>
+</interface>

@@ -1,0 +1,7 @@
+/home/esteban/neopos2.0/build/CMakeFiles/NeoPos.dir
+/home/esteban/neopos2.0/build/CMakeFiles/test.dir
+/home/esteban/neopos2.0/build/CMakeFiles/edit_cache.dir
+/home/esteban/neopos2.0/build/CMakeFiles/rebuild_cache.dir
+/home/esteban/neopos2.0/build/test/CMakeFiles/test.dir
+/home/esteban/neopos2.0/build/test/CMakeFiles/edit_cache.dir
+/home/esteban/neopos2.0/build/test/CMakeFiles/rebuild_cache.dir

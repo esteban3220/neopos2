@@ -1,0 +1,292 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Created with Cambalache 0.10.3 -->
+<interface>
+  <!-- interface-name neopos.ui -->
+  <requires lib="gtk" version="4.6"/>
+  <object class="GtkBox" id="box_ini_bienvenida">
+    <property name="vexpand">True</property>
+    <property name="vexpand-set">True</property>
+    <child>
+      <object class="GtkStackSidebar" id="stack_sidebar">
+        <property name="can-focus">False</property>
+        <property name="can-target">False</property>
+        <property name="focus-on-click">False</property>
+        <property name="stack">stack_bienvenida</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkOverlay">
+            <property name="child">revealer_info</property>
+            <child>
+              <object class="GtkRevealer" id="revealer_info">
+                <property name="child">
+                  <object class="GtkInfoBar" id="info_bar">
+                    <property name="show-close-button">True</property>
+                    <child>
+                      <object class="GtkLabel" id="lbl_info"/>
+                    </child>
+                  </object>
+                </property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkStack" id="stack_bienvenida">
+            <property name="hexpand">True</property>
+            <property name="hexpand-set">True</property>
+            <property name="hhomogeneous">False</property>
+            <property name="margin-bottom">10</property>
+            <property name="margin-end">10</property>
+            <property name="margin-start">10</property>
+            <property name="margin-top">10</property>
+            <property name="transition-type">slide-up-down</property>
+            <property name="vexpand">True</property>
+            <property name="vexpand-set">True</property>
+            <property name="vhomogeneous">False</property>
+            <property name="visible-child-name">pag1</property>
+            <child>
+              <object class="GtkBox" id="box1">
+                <property name="homogeneous">True</property>
+                <property name="name">Pagina 1</property>
+                <property name="orientation">vertical</property>
+                <property name="vexpand">True</property>
+                <property name="vexpand-set">True</property>
+                <child>
+                  <object class="GtkLabel" id="lbl_bienvenida">
+                    <property name="label">Bienvenido a neopos 2.0</property>
+                    <property name="valign">start</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkImage">
+                    <property name="icon-name">input-gaming</property>
+                    <property name="icon-size">large</property>
+                    <property name="pixel-size">175</property>
+                    <property name="vexpand">True</property>
+                    <property name="vexpand-set">True</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="label">Alguna otra descripcion bla blah</property>
+                    <property name="valign">end</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkBox" id="box2">
+                <property name="name">Pagina 2</property>
+                <property name="orientation">vertical</property>
+                <property name="spacing">10</property>
+                <property name="vexpand">True</property>
+                <property name="vexpand-set">True</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="label">Puede escoger almenos una o las dos opciones para conectarse ala bases de datos.</property>
+                    <property name="margin-bottom">10</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkFrame" id="frame">
+                    <property name="label">Tipo de Coneccion</property>
+                    <property name="vexpand-set">True</property>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="halign">center</property>
+                        <property name="valign">center</property>
+                        <child>
+                          <object class="GtkCheckButton" id="chk_local">
+                            <property name="label">Local</property>
+                            <property name="tooltip-text">Escoja esta opcion si desea guardar todos sus registros en este mismo equipo.</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="chk_server">
+                            <property name="label">servidor</property>
+                            <property name="tooltip-text">Seleccione si desea guardar sus registros parcial o totalmente en una base de datos (PostgreSQL)).</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkRevealer" id="revealer_conceccion">
+                    <child>
+                      <object class="GtkFrame">
+                        <property name="label">Datos de Conecion</property>
+                        <child>
+                          <object class="GtkBox">
+                            <property name="orientation">vertical</property>
+                            <property name="spacing">10</property>
+                            <child>
+                              <object class="GtkCheckButton">
+                                <property name="accessible-role">navigation</property>
+                                <property name="halign">center</property>
+                                <property name="label">La conexion ala bases de datos es nueva.</property>
+                                <property name="use-underline">True</property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkBox">
+                                <property name="hexpand">True</property>
+                                <property name="hexpand-set">True</property>
+                                <property name="homogeneous">True</property>
+                                <property name="margin-bottom">10</property>
+                                <property name="margin-end">10</property>
+                                <property name="margin-start">10</property>
+                                <property name="orientation">vertical</property>
+                                <property name="vexpand">True</property>
+                                <property name="vexpand-set">True</property>
+                                <child>
+                                  <object class="GtkEntry" id="ety_user">
+                                    <property name="placeholder-text">Usuario</property>
+                                    <property name="valign">center</property>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkPasswordEntry" id="ety_passwd">
+                                    <property name="placeholder-text">Contraseña</property>
+                                    <property name="valign">center</property>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkEntry" id="ety_host">
+                                    <property name="placeholder-text">Host</property>
+                                    <property name="valign">center</property>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkEntry" id="ety_port">
+                                    <property name="placeholder-text">Puerto</property>
+                                    <property name="valign">center</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkBox" id="box3">
+                <property name="homogeneous">True</property>
+                <property name="name">Pagina 1</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="ellipsize">middle</property>
+                    <property name="halign">center</property>
+                    <property name="label">Inicialize su catalogo de Productos u Omitalo si desea añadirlo desde la interfaz de punto de venta.</property>
+                    <property name="lines">2</property>
+                    <property name="valign">center</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkMenuButton">
+                    <property name="halign">start</property>
+                    <property name="label">Info</property>
+                    <property name="popover">pop_consideracion</property>
+                    <property name="valign">center</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkButton" id="btn_catalogo">
+                    <property name="halign">center</property>
+                    <property name="label">Escoge un Archivo </property>
+                    <property name="valign">center</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkScrolledWindow">
+                    <child>
+                      <object class="GtkTreeView">
+                        <property name="hexpand">True</property>
+                        <property name="hexpand-set">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="vexpand-set">True</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkBox" id="box4">
+                <property name="homogeneous">True</property>
+                <property name="name">Pagina 1</property>
+                <property name="orientation">vertical</property>
+                <property name="vexpand">True</property>
+                <property name="vexpand-set">True</property>
+                <child>
+                  <object class="GtkLabel" id="lbl_bienvenida_3">
+                    <property name="label">Bienvenido a neopos 2.0</property>
+                    <property name="valign">start</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkImage">
+                    <property name="icon-name">input-gaming</property>
+                    <property name="icon-size">large</property>
+                    <property name="pixel-size">175</property>
+                    <property name="vexpand">True</property>
+                    <property name="vexpand-set">True</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="label">Alguna otra descripcion bla blah</property>
+                    <property name="valign">end</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkStackPage" id="pag1">
+                <property name="child">box1</property>
+                <property name="title">Bienvenido</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkStackPage" id="pag2">
+                <property name="child">box2</property>
+                <property name="title">Conexion</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkStackPage" id="pag3">
+                <property name="child">box3</property>
+                <property name="title">Miscelania</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkStackPage" id="pag4">
+                <property name="child">box4</property>
+                <property name="title">Pagina 4</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkTreeView"/>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkPopover" id="pop_consideracion">
+    <property name="child">
+      <object class="GtkLabel">
+        <property name="label">El archivo debe de ser tipo CSV y debe de contener las columnas correspondientes a la de la base de datos.</property>
+      </object>
+    </property>
+  </object>
+</interface>
