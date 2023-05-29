@@ -5,7 +5,7 @@
   <object class="GtkBox" id="box_pos">
     <property name="orientation">1</property>
     <child>
-      <object class="GtkStackSwitcher" id="alg">
+      <object class="GtkStackSwitcher" id="stack_debug">
         <property name="stack">stack_main_pos</property>
       </object>
     </child>

@@ -36,6 +36,8 @@ void Pos::cargar_glade()
 {
     box_pos = builder->m_refBuilder->get_widget<Gtk::Box>("box_pos");
     stack_main_pos = builder->m_refBuilder->get_widget<Gtk::Stack>("stack_main_pos");
+    auto stack_debug = builder->m_refBuilder->get_widget<Gtk::StackSwitcher>("stack_debug");
+    stack_debug->hide();
 
     lbl_precio_total = builder->m_refBuilder->get_widget<Gtk::Label>("lbl_precio_total");
     set_child(*box_pos);
