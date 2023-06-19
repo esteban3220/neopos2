@@ -54,9 +54,6 @@
                         <property name="hexpand-set">true</property>
                         <property name="vexpand">true</property>
                         <property name="vexpand-set">true</property>
-                        <child>
-                          <object class="GtkTreeView"></object>
-                        </child>
                       </object>
                     </child>
                     <child>
@@ -142,14 +139,14 @@
               <object class="GtkBox">
                 <property name="orientation">1</property>
                 <child>
-                  <object class="GtkScrolledWindow">
+                  <object class="GtkScrolledWindow" id="scroll_tree">
                     <property name="hexpand">true</property>
                     <property name="hexpand-set">true</property>
                     <property name="vexpand">true</property>
                     <property name="vexpand-set">true</property>
-                    <child>
+                    <property name="child">
                       <object class="GtkTreeView" id="tree_prov"></object>
-                    </child>
+                    </property>
                   </object>
                 </child>
                 <child>
@@ -172,7 +169,7 @@
                           <object class="GtkButton">
                             <property name="margin-bottom">0</property>
                             <property name="icon-name">list-add-symbolic</property>
-                            <property name="tooltip-text">AÃ±ade un nuevo registro.</property>
+                            <property name="tooltip-text">Añade un nuevo registro.</property>
                           </object>
                         </child>
                         <child>
@@ -221,7 +218,7 @@
                     <property name="margin-start">0</property>
                     <property name="margin-end">5</property>
                     <child>
-                      <object class="GtkLabel" id="lbl_con_prod">
+                      <object class="GtkLabel" id="lbl_cont_prod">
                         <property name="label">Productos: 0</property>
                       </object>
                     </child>
@@ -231,21 +228,21 @@
                         <property name="hexpand-set">true</property>
                         <property name="halign">2</property>
                         <child>
-                          <object class="GtkButton">
+                          <object class="GtkButton" id="btn_add">
                             <property name="margin-bottom">0</property>
                             <property name="icon-name">list-add-symbolic</property>
                             <property name="tooltip-text">AÃ±ade un nuevo registro.</property>
                           </object>
                         </child>
                         <child>
-                          <object class="GtkButton">
+                          <object class="GtkButton" id="btn_remove">
                             <property name="margin-bottom">0</property>
                             <property name="icon-name">list-remove-symbolic</property>
                             <property name="tooltip-text">Elimina un registro.</property>
                           </object>
                         </child>
                         <child>
-                          <object class="GtkButton">
+                          <object class="GtkButton" id="btn_edit">
                             <property name="margin-bottom">0</property>
                             <property name="icon-name">edit-find-replace-symbolic</property>
                             <property name="tooltip-text">Edita la celda seleccionada.</property>

@@ -1,5 +1,5 @@
-#include "../include/Pos.hpp"
-#include "../include/sqlite.hpp"
+#include "proveedor.cpp"
+#include "sqlite.hpp"
 #include <fstream>
 
 int main(int argc, char *argv[])
@@ -25,6 +25,6 @@ int main(int argc, char *argv[])
         return EXIT_SUCCESS;
     }
     */
-        auto app = Gtk::Application::create("org.gtkmm.examples.base");
-        return app->make_window_and_run<Pos>(argc, argv);
+    auto app = Gtk::Application::create("org.gtkmm.examples.base");
+    return app->make_window_and_run<Pos>(argc, argv);
 }

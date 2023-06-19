@@ -1,4 +1,6 @@
-#pragma once
+#ifndef BUILDER_HPP
+#define BUILDER_HPP
+
 #include <gtkmm.h>
 #include <iostream>
 
@@ -55,3 +57,5 @@ Builder::~Builder()
 {
     std::cout << "Builder destroyed" << std::endl;
 }
+
+#endif //BUILDER_HPP
