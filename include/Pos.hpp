@@ -17,6 +17,7 @@ protected:
     Gtk::StackSwitcher stack_switcher;
     Gtk::Stack *stack_main_pos;
     Gtk::MenuButton menu_button;
+    Gtk::Label lbl_total;
 
 public:
     Pos(/* args */)
@@ -37,6 +38,8 @@ void Pos::cargar_glade()
     box_pos = builder->m_refBuilder->get_widget<Gtk::Box>("box_pos");
     stack_main_pos = builder->m_refBuilder->get_widget<Gtk::Stack>("stack_main_pos");
     auto stack_debug = builder->m_refBuilder->get_widget<Gtk::StackSwitcher>("stack_debug");
+    auto box_prod_tool = builder->m_refBuilder->get_widget<Gtk::Box>("box_prod_tool");
+
     stack_debug->hide();
 
     lbl_precio_total = builder->m_refBuilder->get_widget<Gtk::Label>("lbl_precio_total");
@@ -45,4 +48,5 @@ void Pos::cargar_glade()
     lbl_precio_total->set_markup("<span font_desc='50'>$0.00</span>");
     stack_switcher.set_stack(*stack_main_pos);
     stack_switcher.set_child_visible(true);
+    stack_main_pos->set_transition_type(Gtk::StackTransitionType::OVER_LEFT_RIGHT);
 }
