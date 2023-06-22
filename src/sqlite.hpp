@@ -1,6 +1,10 @@
 #pragma once
 #include <sqlite3.h>
 #include <iostream>
+#include <vector>
+
+
+std::vector<std::vector<std::string>> result;
 
 class SQLite
 {
@@ -9,34 +13,12 @@ private:
     char *zErrMsg = 0;
     int rc;
     std::string sql;
+    static int callback(void *, int , char **, char **);
 
 public:
     SQLite();
     ~SQLite();
     bool open();
+    void command(std::string);
+    std::vector<std::vector<std::string>> get_result() const;
 };
-
-SQLite::SQLite()
-{
-    db = nullptr;
-}
-
-SQLite::~SQLite()
-{
-    sqlite3_close(db);
-}
-
-bool SQLite::open()
-{
-    rc = sqlite3_open("database.db", &db);
-    if (rc)
-    {
-        std::cout << "Error al abrir la base de datos: " << sqlite3_errmsg(db) << std::endl;
-        return false;
-    }
-    else
-    {
-        std::cout << "Base de datos abierta correctamente" << std::endl;
-        return true;
-    }
-}
