@@ -29,10 +29,10 @@ private:
             add(correo);
         }
 
-        Gtk::TreeModelColumn<unsigned long> id;
+        Gtk::TreeModelColumn<int> id;
         Gtk::TreeModelColumn<Glib::ustring> m_col_name;
         Gtk::TreeModelColumn<Glib::ustring> empresa;
-        Gtk::TreeModelColumn<unsigned long> numero;
+        Gtk::TreeModelColumn<Glib::ustring> numero;
         Gtk::TreeModelColumn<Glib::ustring> correo;
     };
     ModelColumns m_Columns;
@@ -60,8 +60,12 @@ private:
     void on_prov_dialog_edit_response(int response_id, Gtk::MessageDialog *dialog, const Glib::ustring &path_string, const Glib::ustring &new_text, const int &column);
 
     Gtk::TreeView *tree_prov;
-    Gtk::Label *lbl_cont_prod;
+    Gtk::Label *lbl_cont_prod,*lbl_con_prov;
     Gtk::Button *btn_add_prov, *btn_remove_prov, *btn_edit_prov;
+
+    size_t cont_prov = 0;
+    size_t cont_prod = 0;
+    size_t cont_vent = 0;
 
 
     void carga_señales();

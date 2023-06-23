@@ -1,6 +1,6 @@
 #include "Pos.hpp"
 #include "columns.hpp"
-
+#include <string>
 
 Pos::Pos()
 {
@@ -26,6 +26,7 @@ void Pos::cargar_glade()
     auto stack_debug = builder->m_refBuilder->get_widget<Gtk::StackSwitcher>("stack_debug");
     tree_prov = builder->m_refBuilder->get_widget<Gtk::TreeView>("tree_prov");
     lbl_cont_prod = builder->m_refBuilder->get_widget<Gtk::Label>("lbl_cont_prod");
+    lbl_con_prov = builder->m_refBuilder->get_widget<Gtk::Label>("lbl_con_prov");
     btn_add_prov = builder->m_refBuilder->get_widget<Gtk::Button>("btn_add_prov");
     btn_remove_prov = builder->m_refBuilder->get_widget<Gtk::Button>("btn_remove_prov");
     btn_edit_prov = builder->m_refBuilder->get_widget<Gtk::Button>("btn_edit_prov");
@@ -89,26 +90,22 @@ void Pos::init()
     for (int i = 0; i < result.size(); i++)
     {
         row = *(m_refTreeModel->append());
-        row[m_Columns.id] = std::atoi(result[i][0].c_str());
+        row[m_Columns.id] = std::stoi(result[i][0]);
         row[m_Columns.m_col_name] = result[i][1];
-        row[m_Columns.numero] = std::atoi(result[i][2].c_str());
+        row[m_Columns.numero] = result[i][2];
         row[m_Columns.empresa] = result[i][3];
         row[m_Columns.correo] = result[i][4];
     }
-
-    // row = *(m_refTreeModel->append());
-    // row[m_Columns.id] = 1;
-    // row[m_Columns.m_col_name] = "Juan";
-    // row[m_Columns.numero] = 123456789;
-    // row[m_Columns.empresa] = "Empresa";
-    // row[m_Columns.correo] = "algun_correo@correo.com";
-
 
     tree_prov->set_search_column(m_Columns.m_col_name);
     tree_prov->set_enable_search(true);
     tree_prov->set_visible(true);
 
     tree_prov->set_headers_visible(true);
+
+    cont_prov = m_refTreeModel->children().size();
+
+    lbl_con_prov->set_text("Proveedores: " + std::to_string(cont_prov));
 }
 
 void Pos::on_cell1_edited(const Glib::ustring &path_string, const Glib::ustring &new_text)
@@ -149,12 +146,15 @@ void Pos::on_cell4_edited(const Glib::ustring &path_string, const Glib::ustring 
 
 void Pos::on_btn_add_clicked()
 {
+    auto rowid = m_refTreeModel->get_iter(std::to_string(m_refTreeModel->children().size() - 1));
     row = *(m_refTreeModel->append());
-    row[m_Columns.id] = 0;
+    row[m_Columns.id] = (*rowid)[m_Columns.id] + 1;
     row[m_Columns.m_col_name] = "<i>Editame</i>";
-    row[m_Columns.numero] = 0;
+    row[m_Columns.numero] = "<i>Editame</i>";
     row[m_Columns.empresa] = "<i>Editame</i>";
     row[m_Columns.correo] = "<i>Editame</i>";
+
+    lbl_con_prov->set_text("Proveedores: " + std::to_string(++cont_prov));
 }
 
 void Pos::on_prov_dialog_edit_response(int response_id, Gtk::MessageDialog *dialog, const Glib::ustring &path_string, const Glib::ustring &new_text, const int &column)
@@ -170,25 +170,21 @@ void Pos::on_prov_dialog_edit_response(int response_id, Gtk::MessageDialog *dial
             {
             case COLUMNS::ColumnProveedor::NOMBRE:
             {
-
                 (*iter)[m_Columns.m_col_name] = new_text;
             }
             break;
             case COLUMNS::ColumnProveedor::TELEFONO:
             {
-
-                (*iter)[m_Columns.numero] = std::atoi(new_text.c_str());
+                (*iter)[m_Columns.numero] = new_text.c_str();
             }
             break;
             case COLUMNS::ColumnProveedor::EMPRESA:
             {
-
                 (*iter)[m_Columns.empresa] = new_text;
             }
             break;
             case COLUMNS::ColumnProveedor::EMAIL:
             {
-
                 (*iter)[m_Columns.correo] = new_text;
             }
             break;
