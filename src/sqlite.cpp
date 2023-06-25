@@ -42,8 +42,8 @@ void SQLite::command(std::string sql)
     rc = sqlite3_exec(db, sql.c_str(), callback, 0, &zErrMsg);
     if (rc != SQLITE_OK)
     {
-        std::cout << "SQL error: " << zErrMsg << std::endl
-                  << "SQL: " << sql << std::endl;
+        std::string error = "SQL error: " + std::string(zErrMsg) + "\nSQL: " + sql + "\n";
+        throw std::runtime_error(error);
         sqlite3_free(zErrMsg);
     }
     else

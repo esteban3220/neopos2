@@ -12,10 +12,11 @@ private:
     std::unique_ptr<Builder> builder = std::make_unique<Builder>("../test/mainpos.ui");
     void cargar_glade();
     void init();
+    void init_producto();
 
     std::unique_ptr<SQLite> db = std::make_unique<SQLite>();
 
-    Gtk::TreeModel::Row row;
+    Gtk::TreeModel::Row row_producto;
 
     class ModelColumns : public Gtk::TreeModel::ColumnRecord
     {
@@ -37,7 +38,6 @@ private:
     };
     ModelColumns m_Columns;
     Glib::RefPtr<Gtk::ListStore> m_refTreeModel;
-    Gtk::CellRendererText m_cellrenderer_validated;
     Gtk::TreeView::Column m_treeviewcolumn_validated;
     Glib::ustring m_invalid_text_for_retry;
 
@@ -58,7 +58,7 @@ private:
     void on_cell3_edited(const Glib::ustring &path_string, const Glib::ustring &new_text);
     void on_cell4_edited(const Glib::ustring &path_string, const Glib::ustring &new_text);
     void on_prov_dialog_edit_response(int response_id, Gtk::MessageDialog *dialog, const Glib::ustring &path_string, const Glib::ustring &new_text, const int &column);
-
+    void on_prov_dialog_remove_response(int response_id, Gtk::MessageDialog *dialog);
     Gtk::TreeView *tree_prov;
     Gtk::Label *lbl_cont_prod,*lbl_con_prov;
     Gtk::Button *btn_add_prov, *btn_remove_prov, *btn_edit_prov;
@@ -67,13 +67,86 @@ private:
     size_t cont_prod = 0;
     size_t cont_vent = 0;
 
+    //)==================================Producto==================================(
+    Gtk::TreeModel::Row row;
+
+    class ModelPrroductos : public Gtk::TreeModel::ColumnRecord
+    {
+    public:
+        ModelPrroductos()
+        {
+            add(sku);
+            add(nombre);
+            add(caducidad);
+            add(marca);
+            add(nota);
+            add(piezas);
+            add(precio_u);
+            add(compra_t);
+            add(categoria);
+            add(subcategoria);
+        }
+
+        Gtk::TreeModelColumn<int> sku;
+        Gtk::TreeModelColumn<Glib::ustring> nombre;
+        Gtk::TreeModelColumn<Glib::ustring> caducidad;
+        Gtk::TreeModelColumn<Glib::ustring> marca;
+        Gtk::TreeModelColumn<Glib::ustring> nota;
+        Gtk::TreeModelColumn<Glib::ustring> piezas;
+        Gtk::TreeModelColumn<float> precio_u;
+        Gtk::TreeModelColumn<float> compra_t;
+        Gtk::TreeModelColumn<Glib::ustring> categoria;
+        Gtk::TreeModelColumn<Glib::ustring> subcategoria;
+    };
+    ModelPrroductos m_Columns_prod;
+
+    Glib::RefPtr<Gtk::ListStore> m_refTreeModel_prod;
+
+    Gtk::CellRendererText *cell_sku = Gtk::manage(new Gtk::CellRendererText());
+    Gtk::CellRendererText *cell_nombre = Gtk::manage(new Gtk::CellRendererText());
+    Gtk::CellRendererText *cell_caducidad = Gtk::manage(new Gtk::CellRendererText());
+    Gtk::CellRendererText *cell_nota = Gtk::manage(new Gtk::CellRendererText());
+    Gtk::CellRendererText *cell_piezas = Gtk::manage(new Gtk::CellRendererText());
+    Gtk::CellRendererText *cell_precio_u = Gtk::manage(new Gtk::CellRendererText());
+    Gtk::CellRendererText *cell_compra_t = Gtk::manage(new Gtk::CellRendererText());
+    Gtk::CellRendererText *cell_categoria = Gtk::manage(new Gtk::CellRendererText());
+    Gtk::CellRendererText *cell_subcategoria = Gtk::manage(new Gtk::CellRendererText());
+
+    Gtk::TreeViewColumn *col_sku = nullptr;
+    Gtk::TreeViewColumn *col_nombre = nullptr;
+    Gtk::TreeViewColumn *col_caducidad = nullptr;
+    Gtk::TreeViewColumn *col_marca = nullptr;
+    Gtk::TreeViewColumn *col_nota = nullptr;
+    Gtk::TreeViewColumn *col_piezas = nullptr;
+    Gtk::TreeViewColumn *col_precio_u = nullptr;
+    Gtk::TreeViewColumn *col_compra_t = nullptr;
+    Gtk::TreeViewColumn *col_categoria = nullptr;
+    Gtk::TreeViewColumn *col_subcategoria = nullptr;
+
+    class ModelColumnsCombo : public Gtk::TreeModel::ColumnRecord
+  {
+  public:
+
+    ModelColumnsCombo()
+    { add(m_col_name);}
+
+    Gtk::TreeModelColumn<Glib::ustring> m_col_name;
+  };
+
+    ModelColumnsCombo m_ColumnsCombo;
+    Glib::RefPtr<Gtk::ListStore> m_refTreeModelCombo;
+
+    //)==================================Producto==================================(
+
 
     void carga_señales();
 
     void on_btn_add_clicked();
+    void on_btn_remove_clicked();
 
 protected:
     Gtk::Box *box_pos;
+    Gtk::TreeView *tree_prod;
     Gtk::Label *lbl_precio_total;
     Gtk::HeaderBar header_bar;
     Gtk::StackSwitcher stack_switcher;

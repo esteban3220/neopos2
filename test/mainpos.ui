@@ -173,17 +173,10 @@
                           </object>
                         </child>
                         <child>
-                          <object class="GtkButton" id="btn_edit_prov">
+                          <object class="GtkButton" id="btn_remove_prov">
                             <property name="margin-bottom">0</property>
                             <property name="icon-name">list-remove-symbolic</property>
                             <property name="tooltip-text">Elimina un registro.</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkButton" id="btn_remove_prov">
-                            <property name="margin-bottom">0</property>
-                            <property name="icon-name">edit-find-replace-symbolic</property>
-                            <property name="tooltip-text">Edita la celda seleccionada.</property>
                           </object>
                         </child>
                       </object>
@@ -239,13 +232,6 @@
                             <property name="margin-bottom">0</property>
                             <property name="icon-name">list-remove-symbolic</property>
                             <property name="tooltip-text">Elimina un registro.</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkButton" id="btn_edit">
-                            <property name="margin-bottom">0</property>
-                            <property name="icon-name">edit-find-replace-symbolic</property>
-                            <property name="tooltip-text">Edita la celda seleccionada.</property>
                           </object>
                         </child>
                         <child>
