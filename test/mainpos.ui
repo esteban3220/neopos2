@@ -1,9 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Created with Cambalache 0.12.1 -->
 <interface>
+  <!-- interface-name mainpos.ui -->
   <requires lib="gtk" version="4.0"/>
-  <object class="GtkAdjustment" id="pos_main"></object>
+  <object class="GtkAdjustment" id="pos_main"/>
   <object class="GtkBox" id="box_pos">
     <property name="orientation">1</property>
+    <child>
+      <object class="GtkRevealer">
+        <property name="child">
+          <object class="GtkInfoBar"/>
+        </property>
+      </object>
+    </child>
     <child>
       <object class="GtkStackSwitcher" id="stack_debug">
         <property name="stack">stack_main_pos</property>
@@ -27,8 +36,8 @@
                     <child>
                       <object class="GtkEntry">
                         <property name="hexpand">true</property>
-                        <property name="primary-icon-name">input-keyboard-symbolic</property>
                         <property name="placeholder-text">Ingresa un Codigo de Barras.</property>
+                        <property name="primary-icon-name">input-keyboard-symbolic</property>
                       </object>
                     </child>
                     <child>
@@ -64,14 +73,15 @@
                           <object class="GtkBox">
                             <child>
                               <object class="GtkLabel">
-                                <property name="halign">1</property>
-                                <property name="label">Usuario</property>
+                                <property name="halign">start</property>
+                                <property name="valign">start</property>
                               </object>
                             </child>
                             <child>
                               <object class="GtkLabel">
-                                <property name="halign">2</property>
-                                <property name="label">Rol</property>
+                                <property name="halign">end</property>
+                                <property name="justify">right</property>
+                                <property name="valign">end</property>
                               </object>
                             </child>
                           </object>
@@ -80,8 +90,10 @@
                           <object class="GtkFrame">
                             <property name="child">
                               <object class="GtkLabel" id="lbl_precio_total">
+                                <property name="ellipsize">middle</property>
+                                <property name="justify">center</property>
                                 <property name="label">$ &lt;span font_desc='50'&gt;0.00&lt;/span&gt;</property>
-                                <property name="use-markup">true</property>
+                                <property name="use-markup">True</property>
                                 <property name="width-chars">0</property>
                                 <property name="width-request">300</property>
                               </object>
@@ -109,10 +121,10 @@
                             <property name="child">
                               <object class="GtkLabel">
                                 <property name="label">$&lt;span font_desc='30'&gt;0.00&lt;/span&gt;</property>
-                                <property name="use-markup">true</property>
                                 <property name="margin-bottom">10</property>
                                 <property name="margin-end">10</property>
                                 <property name="margin-start">10</property>
+                                <property name="use-markup">true</property>
                               </object>
                             </property>
                             <property name="label">Cambio</property>
@@ -138,22 +150,25 @@
             <property name="child">
               <object class="GtkBox">
                 <property name="orientation">1</property>
+                <property name="spacing">5</property>
                 <child>
                   <object class="GtkScrolledWindow" id="scroll_tree">
+                    <property name="child">
+                      <object class="GtkTreeView" id="tree_prov">
+                        <property name="enable-grid-lines">vertical</property>
+                      </object>
+                    </property>
                     <property name="hexpand">true</property>
                     <property name="hexpand-set">true</property>
                     <property name="vexpand">true</property>
                     <property name="vexpand-set">true</property>
-                    <property name="child">
-                      <object class="GtkTreeView" id="tree_prov"></object>
-                    </property>
                   </object>
                 </child>
                 <child>
                   <object class="GtkBox">
-                    <property name="orientation">0</property>
-                    <property name="margin-start">0</property>
                     <property name="margin-end">5</property>
+                    <property name="margin-start">0</property>
+                    <property name="orientation">0</property>
                     <property name="spacing">5</property>
                     <child>
                       <object class="GtkLabel" id="lbl_con_prov">
@@ -162,20 +177,20 @@
                     </child>
                     <child>
                       <object class="GtkBox">
+                        <property name="halign">2</property>
                         <property name="hexpand">true</property>
                         <property name="hexpand-set">true</property>
-                        <property name="halign">2</property>
                         <child>
                           <object class="GtkButton" id="btn_add_prov">
-                            <property name="margin-bottom">0</property>
                             <property name="icon-name">list-add-symbolic</property>
+                            <property name="margin-bottom">0</property>
                             <property name="tooltip-text">Añade un nuevo registro.</property>
                           </object>
                         </child>
                         <child>
                           <object class="GtkButton" id="btn_remove_prov">
-                            <property name="margin-bottom">0</property>
                             <property name="icon-name">list-remove-symbolic</property>
+                            <property name="margin-bottom">0</property>
                             <property name="tooltip-text">Elimina un registro.</property>
                           </object>
                         </child>
@@ -183,7 +198,6 @@
                     </child>
                   </object>
                 </child>
-                <property name="spacing">5</property>
               </object>
             </property>
             <property name="title">Proveedores</property>
@@ -194,6 +208,7 @@
             <property name="child">
               <object class="GtkBox">
                 <property name="orientation">1</property>
+                <property name="spacing">5</property>
                 <child>
                   <object class="GtkScrolledWindow">
                     <property name="hexpand">true</property>
@@ -201,15 +216,17 @@
                     <property name="vexpand">true</property>
                     <property name="vexpand-set">true</property>
                     <child>
-                      <object class="GtkTreeView" id="tree_prod"></object>
+                      <object class="GtkTreeView" id="tree_prod">
+                        <property name="enable-grid-lines">vertical</property>
+                      </object>
                     </child>
                   </object>
                 </child>
                 <child>
                   <object class="GtkBox">
-                    <property name="orientation">0</property>
-                    <property name="margin-start">0</property>
                     <property name="margin-end">5</property>
+                    <property name="margin-start">0</property>
+                    <property name="orientation">0</property>
                     <child>
                       <object class="GtkLabel" id="lbl_cont_prod">
                         <property name="label">Productos: 0</property>
@@ -217,20 +234,20 @@
                     </child>
                     <child>
                       <object class="GtkBox">
+                        <property name="halign">2</property>
                         <property name="hexpand">true</property>
                         <property name="hexpand-set">true</property>
-                        <property name="halign">2</property>
                         <child>
-                          <object class="GtkButton" id="btn_add">
-                            <property name="margin-bottom">0</property>
+                          <object class="GtkButton" id="btn_add_produ">
                             <property name="icon-name">list-add-symbolic</property>
+                            <property name="margin-bottom">0</property>
                             <property name="tooltip-text">AÃ±ade un nuevo registro.</property>
                           </object>
                         </child>
                         <child>
-                          <object class="GtkButton" id="btn_remove">
-                            <property name="margin-bottom">0</property>
+                          <object class="GtkButton" id="btn_remove_produ">
                             <property name="icon-name">list-remove-symbolic</property>
+                            <property name="margin-bottom">0</property>
                             <property name="tooltip-text">Elimina un registro.</property>
                           </object>
                         </child>
@@ -244,7 +261,6 @@
                     </child>
                   </object>
                 </child>
-                <property name="spacing">5</property>
               </object>
             </property>
             <property name="title">Productos</property>
@@ -263,22 +279,22 @@
                         <property name="label">Busqueda de Ventas.</property>
                         <child>
                           <object class="GtkBox">
-                            <property name="spacing">5</property>
-                            <property name="margin-start">5</property>
-                            <property name="margin-end">5</property>
                             <property name="margin-bottom">5</property>
+                            <property name="margin-end">5</property>
+                            <property name="margin-start">5</property>
+                            <property name="spacing">5</property>
                             <child>
                               <object class="GtkSearchEntry">
                                 <property name="placeholder-text">Buscar por numero de Compra.</property>
                               </object>
                             </child>
                             <child>
-                              <object class="GtkSpinButton"></object>
+                              <object class="GtkSpinButton"/>
                             </child>
                             <child>
                               <object class="GtkMenuButton">
-                                <property name="hexpand">true</property>
                                 <property name="halign">2</property>
+                                <property name="hexpand">true</property>
                                 <property name="label">Fecha</property>
                               </object>
                             </child>
@@ -295,7 +311,7 @@
                             <property name="vexpand">true</property>
                             <property name="vexpand-set">true</property>
                             <child>
-                              <object class="GtkTreeView" id="tree_repor"></object>
+                              <object class="GtkTreeView" id="tree_repor"/>
                             </child>
                           </object>
                         </child>
@@ -351,13 +367,6 @@
             <property name="title">Estadisticas</property>
           </object>
         </child>
-      </object>
-    </child>
-    <child>
-      <object class="GtkRevealer">
-        <property name="child">
-          <object class="GtkInfoBar"></object>
-        </property>
       </object>
     </child>
   </object>

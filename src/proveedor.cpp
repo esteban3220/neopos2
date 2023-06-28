@@ -34,6 +34,8 @@ void Pos::cargar_glade()
     lbl_con_prov = builder->m_refBuilder->get_widget<Gtk::Label>("lbl_con_prov");
     btn_add_prov = builder->m_refBuilder->get_widget<Gtk::Button>("btn_add_prov");
     btn_remove_prov = builder->m_refBuilder->get_widget<Gtk::Button>("btn_remove_prov");
+    btn_add_produ = builder->m_refBuilder->get_widget<Gtk::Button>("btn_add_produ");
+    btn_remove_produ = builder->m_refBuilder->get_widget<Gtk::Button>("btn_remove_produ");
     lbl_precio_total = builder->m_refBuilder->get_widget<Gtk::Label>("lbl_precio_total");
 
     lbl_precio_total->set_markup("<span font_desc='50'>$0.00</span>");
@@ -53,11 +55,77 @@ void Pos::carga_señales()
     cell2->signal_edited().connect(sigc::mem_fun(*this, &Pos::on_cell2_edited));
     cell3->signal_edited().connect(sigc::mem_fun(*this, &Pos::on_cell3_edited));
     cell4->signal_edited().connect(sigc::mem_fun(*this, &Pos::on_cell4_edited));
+
+    btn_add_produ->signal_clicked().connect([this]()
+                                            {row_producto = *(m_refTreeModel_prod->append()); lbl_cont_prod->set_text("Productos: " + std::to_string(++cont_prod)); });
+    cell_sku->signal_edited().connect([this](const Glib::ustring &path_string, const Glib::ustring &new_text)
+                                      {auto dialog = new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true);
+                                        dialog->set_secondary_text("¿Desea editar el campo?");
+                                        dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_produ_dialog_edit_response), dialog, path_string, new_text, COLUMNS::ColumnProducto::SKU));
+                                        dialog->set_default_response(Gtk::ResponseType::OK);
+                                        dialog->show(); });
+
+    cell_nombre->signal_edited().connect([this](const Glib::ustring &path_string, const Glib::ustring &new_text)
+                                         {auto dialog = new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true);
+                                           dialog->set_secondary_text("¿Desea editar el campo?");
+                                           dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_produ_dialog_edit_response), dialog, path_string, new_text, COLUMNS::ColumnProducto::NOMBRE_PRODUCTO));
+                                           dialog->set_default_response(Gtk::ResponseType::OK);
+                                           dialog->show(); });
+
+    cell_caducidad->signal_edited().connect([this](const Glib::ustring &path_string, const Glib::ustring &new_text)
+                                            {auto dialog = new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true);
+                                                dialog->set_secondary_text("¿Desea editar el campo?");
+                                                dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_produ_dialog_edit_response), dialog, path_string, new_text, COLUMNS::ColumnProducto::CADUCIDAD));
+                                                dialog->set_default_response(Gtk::ResponseType::OK);
+                                                dialog->show(); });
+
+    // cell_marca->signal_changed().connect(sigc::mem_fun(*this, &Pos::on_cell_marca_changed));
+
+    cell_marca->signal_changed().connect([this](const Glib::ustring &path_string, const Gtk::TreeModel::iterator &val)
+                                         {auto dialog = new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true);
+                                            dialog->set_secondary_text("¿Desea editar el campo?");
+                                            dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_cell_marca_changed), dialog, path_string, val));
+                                            dialog->set_default_response(Gtk::ResponseType::OK);
+                                            dialog->show(); });
+
+    cell_nota->signal_edited().connect([this](const Glib::ustring &path_string, const Glib::ustring &new_text)
+                                       {auto dialog = new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true);
+                                        dialog->set_secondary_text("¿Desea editar el campo?");
+                                        dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_produ_dialog_edit_response), dialog, path_string, new_text, COLUMNS::ColumnProducto::NOTA));
+                                        dialog->set_default_response(Gtk::ResponseType::OK);
+                                        dialog->show(); });
+
+    cell_piezas->signal_edited().connect([this](const Glib::ustring &path_string, const Glib::ustring &new_text)
+                                         {auto dialog = new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true);
+                                            dialog->set_secondary_text("¿Desea editar el campo?");
+                                            dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_produ_dialog_edit_response), dialog, path_string, new_text, COLUMNS::ColumnProducto::PIEZAS));
+                                            dialog->set_default_response(Gtk::ResponseType::OK);
+                                            dialog->show(); });
+
+    cell_precio_u->signal_edited().connect([this](const Glib::ustring &path_string, const Glib::ustring &new_text)
+                                           {auto dialog = new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true);
+                                                dialog->set_secondary_text("¿Desea editar el campo?");
+                                                dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_produ_dialog_edit_response), dialog, path_string, new_text, COLUMNS::ColumnProducto::PRECIO_U));
+                                                dialog->set_default_response(Gtk::ResponseType::OK);
+                                                dialog->show(); });
+
+    cell_categoria->signal_edited().connect([this](const Glib::ustring &path_string, const Glib::ustring &new_text)
+                                            {auto dialog = new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true);
+                                                dialog->set_secondary_text("¿Desea editar el campo?");
+                                                dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_produ_dialog_edit_response), dialog, path_string, new_text, COLUMNS::ColumnProducto::CATEGORIA));
+                                                dialog->set_default_response(Gtk::ResponseType::OK);
+                                                dialog->show(); });
+
+    cell_subcategoria->signal_edited().connect([this](const Glib::ustring &path_string, const Glib::ustring &new_text)
+                                               {auto dialog = new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true);
+                                                    dialog->set_secondary_text("¿Desea editar el campo?");
+                                                    dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_produ_dialog_edit_response), dialog, path_string, new_text, COLUMNS::ColumnProducto::SUBCATEGORIA));
+                                                    dialog->set_default_response(Gtk::ResponseType::OK);
+                                                    dialog->show(); });
 }
 
 void Pos::init()
 {
-
     m_refTreeModel = Gtk::ListStore::create(m_Columns);
     tree_prov->set_model(m_refTreeModel);
 
@@ -92,6 +160,8 @@ void Pos::init()
     db->command("SELECT * FROM proveedor");
     result = db->get_result();
 
+    m_refTreeModelCombo = Gtk::ListStore::create(m_ColumnsCombo);
+
     for (int i = 0; i < result.size(); i++)
     {
         row = *(m_refTreeModel->append());
@@ -100,7 +170,10 @@ void Pos::init()
         row[m_Columns.numero] = result[i][2];
         row[m_Columns.empresa] = result[i][3];
         row[m_Columns.correo] = result[i][4];
+        auto iter_ = m_refTreeModelCombo->append();
+        (*iter_)[m_ColumnsCombo.m_col_name] = result[i][3];
     }
+    result.clear();
 
     tree_prov->set_search_column(m_Columns.m_col_name);
     tree_prov->set_enable_search(true);
@@ -156,13 +229,15 @@ void Pos::on_btn_add_clicked()
 
     try
     {
-        db->command("INSERT INTO proveedor (id,nombre, numero, empresa, correo) VALUES ("+ std::to_string(id) +", 'Editame', 0, 'Editame', 'Editame')");
+        db->command("INSERT INTO proveedor (id,nombre, numero, empresa, correo) VALUES (" + std::to_string(id) + ", 'Editame', 0, 'Editame', 'Editame')");
         row = *(m_refTreeModel->append());
         row[m_Columns.id] = id;
         row[m_Columns.m_col_name] = "<i>Editame</i>";
         row[m_Columns.numero] = "<i>Editame</i>";
         row[m_Columns.empresa] = "<i>Editame</i>";
         row[m_Columns.correo] = "<i>Editame</i>";
+        auto iter_ = m_refTreeModelCombo->append();
+        (*iter_)[m_ColumnsCombo.m_col_name] = "Editame";
 
         lbl_con_prov->set_text("Proveedores: " + std::to_string(++cont_prov));
     }
@@ -176,27 +251,32 @@ void Pos::on_btn_add_clicked()
     }
 }
 
-void Pos::on_btn_remove_clicked(){
+void Pos::on_btn_remove_clicked()
+{
     auto dialog = new Gtk::MessageDialog(*this, "Eliminar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true);
     dialog->set_secondary_text("¿Desea eliminar el registro?");
-    dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this , &Pos::on_prov_dialog_remove_response), dialog));
+    dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_prov_dialog_remove_response), dialog));
     dialog->set_default_response(Gtk::ResponseType::OK);
     dialog->show();
 }
 
-void Pos::on_prov_dialog_remove_response(int response_id, Gtk::MessageDialog *dialog){
+void Pos::on_prov_dialog_remove_response(int response_id, Gtk::MessageDialog *dialog)
+{
     switch (response_id)
     {
     case Gtk::ResponseType::OK:
     {
         auto selection = tree_prov->get_selection()->get_selected();
+        auto iter_ = m_refTreeModel->get_path(selection);
         if (*selection)
         {
-            auto rowid = m_refTreeModel->get_iter(std::to_string(m_refTreeModel->children().size() - 1));
             try
             {
                 db->command("DELETE FROM proveedor WHERE id = " + std::to_string((*selection)[m_Columns.id]));
                 m_refTreeModel->erase(selection);
+
+                m_refTreeModelCombo->erase(m_refTreeModelCombo->get_iter(iter_.to_string()));
+
                 lbl_con_prov->set_text("Proveedores: " + std::to_string(--cont_prov));
                 dialog->close();
             }
@@ -232,38 +312,41 @@ void Pos::on_prov_dialog_edit_response(int response_id, Gtk::MessageDialog *dial
     {
     case Gtk::ResponseType::OK:
     {
-        auto iter = tree_prov->get_model()->get_iter(path_string);
+        std::cout << "Path: " << path_string << std::endl;
+        auto iter = m_refTreeModel->get_iter(path_string);
+        auto iter_ = m_refTreeModelCombo->get_iter(path_string);
         if (iter)
         {
             try
             {
-            switch (column)
-            {
-            case COLUMNS::ColumnProveedor::NOMBRE:
-            {
-                db->command("UPDATE proveedor SET nombre = '" + new_text + "' WHERE id = " + std::to_string((*iter)[m_Columns.id]));
-                (*iter)[m_Columns.m_col_name] = new_text;
-            }
-            break;
-            case COLUMNS::ColumnProveedor::TELEFONO:
-            {
-                db->command("UPDATE proveedor SET numero = '" + new_text + "' WHERE id = " + std::to_string((*iter)[m_Columns.id]));
-                (*iter)[m_Columns.numero] = new_text.c_str();
-            }
-            break;
-            case COLUMNS::ColumnProveedor::EMPRESA:
-            {
-                db->command("UPDATE proveedor SET empresa = '" + new_text + "' WHERE id = " + std::to_string((*iter)[m_Columns.id]));
-                (*iter)[m_Columns.empresa] = new_text;
-            }
-            break;
-            case COLUMNS::ColumnProveedor::EMAIL:
-            {
-                db->command("UPDATE proveedor SET correo = '" + new_text + "' WHERE id = " + std::to_string((*iter)[m_Columns.id]));
-                (*iter)[m_Columns.correo] = new_text;
-            }
-            break;
-            }
+                switch (column)
+                {
+                case COLUMNS::ColumnProveedor::NOMBRE:
+                {
+                    db->command("UPDATE proveedor SET nombre = '" + new_text + "' WHERE id = " + std::to_string((*iter)[m_Columns.id]));
+                    (*iter)[m_Columns.m_col_name] = new_text;
+                }
+                break;
+                case COLUMNS::ColumnProveedor::TELEFONO:
+                {
+                    db->command("UPDATE proveedor SET numero = '" + new_text + "' WHERE id = " + std::to_string((*iter)[m_Columns.id]));
+                    (*iter)[m_Columns.numero] = new_text.c_str();
+                }
+                break;
+                case COLUMNS::ColumnProveedor::EMPRESA:
+                {
+                    db->command("UPDATE proveedor SET empresa = '" + new_text + "' WHERE id = " + std::to_string((*iter)[m_Columns.id]));
+                    (*iter)[m_Columns.empresa] = new_text;
+                    (*iter_)[m_ColumnsCombo.m_col_name] = new_text;
+                }
+                break;
+                case COLUMNS::ColumnProveedor::EMAIL:
+                {
+                    db->command("UPDATE proveedor SET correo = '" + new_text + "' WHERE id = " + std::to_string((*iter)[m_Columns.id]));
+                    (*iter)[m_Columns.correo] = new_text;
+                }
+                break;
+                }
             }
             catch (std::exception &e)
             {

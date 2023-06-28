@@ -31,7 +31,7 @@ int SQLite::callback(void *NotUsed, int argc, char **argv, char **azColName)
     for (size_t i = 0; i < argc; i++)
     {
         // printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL")
-        row.push_back(argv[i] ? argv[i] : "NULL");
+        row.emplace_back(argv[i] ? argv[i] : "NULL");
     }
     result.emplace_back(row);
     return 0;
@@ -54,5 +54,5 @@ void SQLite::command(std::string sql)
 
 std::vector<std::vector<std::string>> SQLite::get_result() const
 {
-    return result;
+    return ::result;
 }

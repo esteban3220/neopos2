@@ -1,5 +1,5 @@
 #ifndef POS_HPP
-#define POS_HPP 
+#define POS_HPP
 #include "builder.hpp"
 #include <memory>
 #include <iostream>
@@ -59,9 +59,20 @@ private:
     void on_cell4_edited(const Glib::ustring &path_string, const Glib::ustring &new_text);
     void on_prov_dialog_edit_response(int response_id, Gtk::MessageDialog *dialog, const Glib::ustring &path_string, const Glib::ustring &new_text, const int &column);
     void on_prov_dialog_remove_response(int response_id, Gtk::MessageDialog *dialog);
+
+
+    void on_produ_dialog_edit_response(int response_id, Gtk::MessageDialog *dialog, const Glib::ustring &path_string, const Glib::ustring &new_text, const int &column);
+
+    void on_cell_cantidad_edited(const Glib::ustring &path_string, const Glib::ustring &new_text);
+    
+    void on_cell_marca_changed(int response_id,Gtk::MessageDialog *dialog,const Glib::ustring &path_string, const Gtk::TreeModel::iterator &);
+
+    void on_cell_data_func_u(Gtk::CellRenderer* renderer,const Gtk::TreeModel::const_iterator& iter);
+    void on_cell_data_func_c(Gtk::CellRenderer* renderer,const Gtk::TreeModel::const_iterator& iter);
+
     Gtk::TreeView *tree_prov;
-    Gtk::Label *lbl_cont_prod,*lbl_con_prov;
-    Gtk::Button *btn_add_prov, *btn_remove_prov, *btn_edit_prov;
+    Gtk::Label *lbl_cont_prod, *lbl_con_prov;
+    Gtk::Button *btn_add_prov, *btn_remove_prov, *btn_edit_prov , *btn_add_produ, *btn_remove_produ;
 
     size_t cont_prov = 0;
     size_t cont_prod = 0;
@@ -82,7 +93,6 @@ private:
             add(nota);
             add(piezas);
             add(precio_u);
-            add(compra_t);
             add(categoria);
             add(subcategoria);
         }
@@ -92,9 +102,8 @@ private:
         Gtk::TreeModelColumn<Glib::ustring> caducidad;
         Gtk::TreeModelColumn<Glib::ustring> marca;
         Gtk::TreeModelColumn<Glib::ustring> nota;
-        Gtk::TreeModelColumn<Glib::ustring> piezas;
+        Gtk::TreeModelColumn<int> piezas;
         Gtk::TreeModelColumn<float> precio_u;
-        Gtk::TreeModelColumn<float> compra_t;
         Gtk::TreeModelColumn<Glib::ustring> categoria;
         Gtk::TreeModelColumn<Glib::ustring> subcategoria;
     };
@@ -105,12 +114,13 @@ private:
     Gtk::CellRendererText *cell_sku = Gtk::manage(new Gtk::CellRendererText());
     Gtk::CellRendererText *cell_nombre = Gtk::manage(new Gtk::CellRendererText());
     Gtk::CellRendererText *cell_caducidad = Gtk::manage(new Gtk::CellRendererText());
+    Gtk::CellRendererCombo *cell_marca = Gtk::make_managed<Gtk::CellRendererCombo>();
     Gtk::CellRendererText *cell_nota = Gtk::manage(new Gtk::CellRendererText());
     Gtk::CellRendererText *cell_piezas = Gtk::manage(new Gtk::CellRendererText());
-    Gtk::CellRendererText *cell_precio_u = Gtk::manage(new Gtk::CellRendererText());
-    Gtk::CellRendererText *cell_compra_t = Gtk::manage(new Gtk::CellRendererText());
-    Gtk::CellRendererText *cell_categoria = Gtk::manage(new Gtk::CellRendererText());
-    Gtk::CellRendererText *cell_subcategoria = Gtk::manage(new Gtk::CellRendererText());
+    Gtk::CellRendererSpin *cell_precio_u = Gtk::manage(new Gtk::CellRendererSpin());
+    Gtk::CellRendererSpin *cell_compra_t = Gtk::manage(new Gtk::CellRendererSpin());
+    Gtk::CellRendererCombo *cell_categoria = Gtk::make_managed<Gtk::CellRendererCombo>();
+    Gtk::CellRendererCombo *cell_subcategoria = Gtk::make_managed<Gtk::CellRendererCombo>();
 
     Gtk::TreeViewColumn *col_sku = nullptr;
     Gtk::TreeViewColumn *col_nombre = nullptr;
@@ -124,20 +134,21 @@ private:
     Gtk::TreeViewColumn *col_subcategoria = nullptr;
 
     class ModelColumnsCombo : public Gtk::TreeModel::ColumnRecord
-  {
-  public:
+    {
+    public:
+        ModelColumnsCombo()
+        {
+            add(m_col_name);
+        }
 
-    ModelColumnsCombo()
-    { add(m_col_name);}
-
-    Gtk::TreeModelColumn<Glib::ustring> m_col_name;
-  };
+        // Gtk::TreeModelColumn<int> id;
+        Gtk::TreeModelColumn<Glib::ustring> m_col_name;
+    };
 
     ModelColumnsCombo m_ColumnsCombo;
     Glib::RefPtr<Gtk::ListStore> m_refTreeModelCombo;
 
     //)==================================Producto==================================(
-
 
     void carga_señales();
 
@@ -157,7 +168,6 @@ protected:
 public:
     Pos(/* args */);
     ~Pos() {}
-
 };
 
-#endif //POS_HPP
+#endif // POS_HPP

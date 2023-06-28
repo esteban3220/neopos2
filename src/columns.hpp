@@ -9,4 +9,17 @@ namespace COLUMNS
         EMPRESA,
         EMAIL
     };
+
+    enum ColumnProducto
+    {
+        SKU,
+        NOMBRE_PRODUCTO,
+        CADUCIDAD,
+        MARCA,
+        NOTA,
+        PIEZAS,
+        PRECIO_U,
+        CATEGORIA,
+        SUBCATEGORIA
+    };
 } // namespace proveedor
