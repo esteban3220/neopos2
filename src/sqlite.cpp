@@ -56,3 +56,8 @@ std::vector<std::vector<std::string>> SQLite::get_result() const
 {
     return ::result;
 }
+
+int SQLite::get_rc() const
+{
+    return rc;
+}

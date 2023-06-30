@@ -3,6 +3,8 @@
 #include "builder.hpp"
 #include <memory>
 #include <iostream>
+#include <map>
+#include <vector>
 #include "sqlite.cpp"
 
 class Pos : public Gtk::Window
@@ -13,10 +15,14 @@ private:
     void cargar_glade();
     void init();
     void init_producto();
+    void llena_subca();
+
+    std::map<std::string, std::vector<std::string>> subcategoria_map;
 
     std::unique_ptr<SQLite> db = std::make_unique<SQLite>();
 
     Gtk::TreeModel::Row row_producto;
+    Gtk::TreeModel::Row row_subcategoria;
 
     class ModelColumns : public Gtk::TreeModel::ColumnRecord
     {
@@ -60,19 +66,21 @@ private:
     void on_prov_dialog_edit_response(int response_id, Gtk::MessageDialog *dialog, const Glib::ustring &path_string, const Glib::ustring &new_text, const int &column);
     void on_prov_dialog_remove_response(int response_id, Gtk::MessageDialog *dialog);
 
-
     void on_produ_dialog_edit_response(int response_id, Gtk::MessageDialog *dialog, const Glib::ustring &path_string, const Glib::ustring &new_text, const int &column);
 
     void on_cell_cantidad_edited(const Glib::ustring &path_string, const Glib::ustring &new_text);
-    
-    void on_cell_marca_changed(int response_id,Gtk::MessageDialog *dialog,const Glib::ustring &path_string, const Gtk::TreeModel::iterator &);
 
-    void on_cell_data_func_u(Gtk::CellRenderer* renderer,const Gtk::TreeModel::const_iterator& iter);
-    void on_cell_data_func_c(Gtk::CellRenderer* renderer,const Gtk::TreeModel::const_iterator& iter);
+    void on_cell_marca_changed(int response_id, Gtk::MessageDialog *dialog, const Glib::ustring &path_string, const Gtk::TreeModel::iterator &);
+    void on_cell_categoria_changed(int response_id, Gtk::MessageDialog *dialog, const Glib::ustring &path_string, const Gtk::TreeModel::iterator &);
+    void on_cell_subcategoria_changed(int response_id, Gtk::MessageDialog *dialog, const Glib::ustring &path_string, const Gtk::TreeModel::iterator &);
+
+    void on_cell_data_func_u(Gtk::CellRenderer *renderer, const Gtk::TreeModel::const_iterator &iter);
+    void on_cell_data_func_c(Gtk::CellRenderer *renderer, const Gtk::TreeModel::const_iterator &iter);
 
     Gtk::TreeView *tree_prov;
     Gtk::Label *lbl_cont_prod, *lbl_con_prov;
-    Gtk::Button *btn_add_prov, *btn_remove_prov, *btn_edit_prov , *btn_add_produ, *btn_remove_produ;
+    Gtk::Button *btn_add_prov, *btn_remove_prov, *btn_edit_prov, *btn_add_produ, *btn_remove_produ;
+    Gtk::Entry *ety_barras;
 
     size_t cont_prov = 0;
     size_t cont_prod = 0;
@@ -97,7 +105,7 @@ private:
             add(subcategoria);
         }
 
-        Gtk::TreeModelColumn<int> sku;
+        Gtk::TreeModelColumn<size_t> sku;
         Gtk::TreeModelColumn<Glib::ustring> nombre;
         Gtk::TreeModelColumn<Glib::ustring> caducidad;
         Gtk::TreeModelColumn<Glib::ustring> marca;
@@ -148,12 +156,44 @@ private:
     ModelColumnsCombo m_ColumnsCombo;
     Glib::RefPtr<Gtk::ListStore> m_refTreeModelCombo;
 
+    //=========================================================================
+
+    class ModelColumnsCategoria : public Gtk::TreeModel::ColumnRecord
+    {
+    public:
+        ModelColumnsCategoria()
+        {
+            add(m_col_name);
+        }
+
+        Gtk::TreeModelColumn<Glib::ustring> m_col_name;
+    };
+
+    ModelColumnsCategoria m_ColumnsCategoria;
+    Glib::RefPtr<Gtk::ListStore> m_refTreeModelCategoria;
+
+    class ModelColumnsSubCategoria : public Gtk::TreeModel::ColumnRecord
+    {
+    public:
+        ModelColumnsSubCategoria()
+        {
+            add(m_col_name);
+        }
+
+        Gtk::TreeModelColumn<Glib::ustring> m_col_name;
+    };
+
+    ModelColumnsSubCategoria m_ColumnsSubCategoria;
+    Glib::RefPtr<Gtk::ListStore> m_refTreeModelSubCategoria;
+
     //)==================================Producto==================================(
 
     void carga_señales();
 
     void on_btn_add_clicked();
     void on_btn_remove_clicked();
+
+    Glib::RefPtr<Gtk::EntryCompletion> completion_pos = Gtk::EntryCompletion::create();
 
 protected:
     Gtk::Box *box_pos;
@@ -164,6 +204,7 @@ protected:
     Gtk::Stack *stack_main_pos;
     Gtk::MenuButton menu_button;
     Gtk::Label lbl_total;
+    Gtk::Popover popover_cal;
 
 public:
     Pos(/* args */);
