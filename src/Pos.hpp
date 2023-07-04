@@ -46,6 +46,8 @@ private:
     Glib::RefPtr<Gtk::ListStore> m_refTreeModel;
     Gtk::TreeView::Column m_treeviewcolumn_validated;
     Glib::ustring m_invalid_text_for_retry;
+    std::unique_ptr<Gtk::MessageDialog> dialog;
+    std::unique_ptr<Gtk::MessageDialog> dialog_error;
 
     //)==================================Proveedor==================================(
     Gtk::CellRendererText *cell1 = Gtk::manage(new Gtk::CellRendererText());
@@ -63,21 +65,21 @@ private:
     void on_cell2_edited(const Glib::ustring &path_string, const Glib::ustring &new_text);
     void on_cell3_edited(const Glib::ustring &path_string, const Glib::ustring &new_text);
     void on_cell4_edited(const Glib::ustring &path_string, const Glib::ustring &new_text);
-    void on_prov_dialog_edit_response(int response_id, Gtk::MessageDialog *dialog, const Glib::ustring &path_string, const Glib::ustring &new_text, const int &column);
-    void on_prov_dialog_remove_response(int response_id, Gtk::MessageDialog *dialog);
+    void on_prov_dialog_edit_response(int response_id, const Glib::ustring &path_string, const Glib::ustring &new_text, const int &column);
+    void on_prov_dialog_remove_response(int response_id);
 
-    void on_produ_dialog_edit_response(int response_id, Gtk::MessageDialog *dialog, const Glib::ustring &path_string, const Glib::ustring &new_text, const int &column);
+    void on_produ_dialog_edit_response(int response_id, const Glib::ustring &path_string, const Glib::ustring &new_text, const int &column);
 
     void on_cell_cantidad_edited(const Glib::ustring &path_string, const Glib::ustring &new_text);
 
-    void on_cell_marca_changed(int response_id, Gtk::MessageDialog *dialog, const Glib::ustring &path_string, const Gtk::TreeModel::iterator &);
-    void on_cell_categoria_changed(int response_id, Gtk::MessageDialog *dialog, const Glib::ustring &path_string, const Gtk::TreeModel::iterator &);
-    void on_cell_subcategoria_changed(int response_id, Gtk::MessageDialog *dialog, const Glib::ustring &path_string, const Gtk::TreeModel::iterator &);
+    void on_cell_marca_changed(int response_id, const Glib::ustring &path_string, const Gtk::TreeModel::iterator &);
+    void on_cell_categoria_changed(int response_id, const Glib::ustring &path_string, const Gtk::TreeModel::iterator &);
+    void on_cell_subcategoria_changed(int response_id, const Glib::ustring &path_string, const Gtk::TreeModel::iterator &);
 
     void on_cell_data_func_u(Gtk::CellRenderer *renderer, const Gtk::TreeModel::const_iterator &iter);
     void on_cell_data_func_c(Gtk::CellRenderer *renderer, const Gtk::TreeModel::const_iterator &iter);
 
-    Gtk::TreeView *tree_prov;
+    Gtk::TreeView *tree_prov,*tree_venta;
     Gtk::Label *lbl_cont_prod, *lbl_con_prov;
     Gtk::Button *btn_add_prov, *btn_remove_prov, *btn_edit_prov, *btn_add_produ, *btn_remove_produ;
     Gtk::Entry *ety_barras;
@@ -188,10 +190,44 @@ private:
 
     //)==================================Producto==================================(
 
+
+    class ModelCarroVenta : public Gtk::TreeModel::ColumnRecord
+    {
+    public:
+        ModelCarroVenta()
+        {
+            add(sku);
+            add(nombre);
+            add(cantidad);
+            add(precio_u);
+            add(precio_t);
+        }
+
+        Gtk::TreeModelColumn<size_t> sku;
+        Gtk::TreeModelColumn<size_t> cantidad;
+        Gtk::TreeModelColumn<Glib::ustring> nombre;
+        Gtk::TreeModelColumn<float> precio_u;
+        Gtk::TreeModelColumn<float> precio_t;
+    };
+    ModelCarroVenta m_Columns_venta;
+
+    Glib::RefPtr<Gtk::ListStore> ModelCarroVenta;
+
     void carga_señales();
+    void init_venta();
+    void add_articulo_venta();
+    bool add_match_arcticulo(const Gtk::TreeModel::iterator& iter);
+    void on_spin_ingreso_changed();
+    void on_btn_pago_efectivo_clicked();
+    void on_btn_pago_tarjeta_clicked();
+    void cierra_dialogo(int response_id);
+
+    Gtk::TreeModel::Row row_venta;
 
     void on_btn_add_clicked();
     void on_btn_remove_clicked();
+    bool on_spin_ingreso_activate(guint keyval, guint, Gdk::ModifierType state);
+    double total_vcarrito = 0;
 
     Glib::RefPtr<Gtk::EntryCompletion> completion_pos = Gtk::EntryCompletion::create();
 
@@ -203,8 +239,12 @@ protected:
     Gtk::StackSwitcher stack_switcher;
     Gtk::Stack *stack_main_pos;
     Gtk::MenuButton menu_button;
-    Gtk::Label lbl_total;
+    Gtk::Label *lbl_cambio;
     Gtk::Popover popover_cal;
+    Gtk::SpinButton *spin_ingreso;
+    Gtk::Button *btn_pago_efectivo,*btn_pago_tarjeta;
+    Gtk::Entry ety_folio;
+
 
 public:
     Pos(/* args */);

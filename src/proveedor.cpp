@@ -2,6 +2,7 @@
 
 #include "Pos.hpp"
 #include "producto.cpp"
+#include "point.cpp"
 #include "columns.hpp"
 #include <string>
 
@@ -25,6 +26,8 @@ Pos::Pos()
     ety_barras->set_completion(completion_pos);
     completion_pos->set_model(m_refTreeModel_prod);
     completion_pos->set_text_column(m_Columns_prod.nombre);
+    spin_ingreso->set_adjustment(Gtk::Adjustment::create(0.0, 0.0, 100000.0, 1.0, 2.0, 2.0));
+    init_venta();
 }
 
 void Pos::cargar_glade()
@@ -34,6 +37,7 @@ void Pos::cargar_glade()
     auto stack_debug = builder->m_refBuilder->get_widget<Gtk::StackSwitcher>("stack_debug");
     tree_prov = builder->m_refBuilder->get_widget<Gtk::TreeView>("tree_prov");
     tree_prod = builder->m_refBuilder->get_widget<Gtk::TreeView>("tree_prod");
+    tree_venta = builder->m_refBuilder->get_widget<Gtk::TreeView>("tree_venta");
     lbl_cont_prod = builder->m_refBuilder->get_widget<Gtk::Label>("lbl_cont_prod");
     lbl_con_prov = builder->m_refBuilder->get_widget<Gtk::Label>("lbl_con_prov");
     btn_add_prov = builder->m_refBuilder->get_widget<Gtk::Button>("btn_add_prov");
@@ -42,6 +46,10 @@ void Pos::cargar_glade()
     btn_remove_produ = builder->m_refBuilder->get_widget<Gtk::Button>("btn_remove_produ");
     lbl_precio_total = builder->m_refBuilder->get_widget<Gtk::Label>("lbl_precio_total");
     ety_barras = builder->m_refBuilder->get_widget<Gtk::Entry>("ety_barras");
+    spin_ingreso = builder->m_refBuilder->get_widget<Gtk::SpinButton>("spin_ingreso");
+    lbl_cambio = builder->m_refBuilder->get_widget<Gtk::Label>("lbl_cambio");
+    btn_pago_efectivo = builder->m_refBuilder->get_widget<Gtk::Button>("btn_pago_efectivo");
+    btn_pago_tarjeta = builder->m_refBuilder->get_widget<Gtk::Button>("btn_pago_tarjeta");
 
     lbl_precio_total->set_markup("$<span font_desc='50'>0.00</span>");
     stack_switcher.set_stack(*stack_main_pos);
@@ -54,76 +62,86 @@ void Pos::cargar_glade()
 
 void Pos::carga_señales()
 {
+    auto controller = Gtk::EventControllerKey::create();
+
     btn_add_prov->signal_clicked().connect(sigc::mem_fun(*this, &Pos::on_btn_add_clicked));
     btn_remove_prov->signal_clicked().connect(sigc::mem_fun(*this, &Pos::on_btn_remove_clicked));
     cell1->signal_edited().connect(sigc::mem_fun(*this, &Pos::on_cell1_edited));
     cell2->signal_edited().connect(sigc::mem_fun(*this, &Pos::on_cell2_edited));
     cell3->signal_edited().connect(sigc::mem_fun(*this, &Pos::on_cell3_edited));
     cell4->signal_edited().connect(sigc::mem_fun(*this, &Pos::on_cell4_edited));
+    ety_barras->signal_activate().connect(sigc::mem_fun(*this, &Pos::add_articulo_venta));
+    completion_pos->signal_match_selected().connect(sigc::mem_fun(*this, &Pos::add_match_arcticulo), false);
+    spin_ingreso->signal_value_changed().connect(sigc::mem_fun(*this, &Pos::on_spin_ingreso_changed));
+    controller->signal_key_pressed().connect(sigc::mem_fun(*this, &Pos::on_spin_ingreso_activate),false);
+    btn_pago_efectivo->signal_clicked().connect(sigc::mem_fun(*this, &Pos::on_btn_pago_efectivo_clicked));
+    btn_pago_tarjeta->signal_clicked().connect(sigc::mem_fun(*this, &Pos::on_btn_pago_tarjeta_clicked));
+
+    add_controller(controller);
 
     btn_add_produ->signal_clicked().connect([this]()
                                             {row_producto = *(m_refTreeModel_prod->append()); lbl_cont_prod->set_text("Productos: " + std::to_string(++cont_prod)); });
     cell_sku->signal_edited().connect([this](const Glib::ustring &path_string, const Glib::ustring &new_text)
-                                      {auto dialog = new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true);
+                                      {dialog.reset(new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true));
                                         dialog->set_secondary_text("¿Desea editar el campo?");
-                                        dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_produ_dialog_edit_response), dialog, path_string, new_text, COLUMNS::ColumnProducto::SKU));
+                                        dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_produ_dialog_edit_response),  path_string, new_text, COLUMNS::ColumnProducto::SKU));
                                         dialog->set_default_response(Gtk::ResponseType::OK);
                                         dialog->show(); });
 
     cell_nombre->signal_edited().connect([this](const Glib::ustring &path_string, const Glib::ustring &new_text)
-                                         {auto dialog = new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true);
+                                         {dialog.reset(new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true));
                                            dialog->set_secondary_text("¿Desea editar el campo?");
-                                           dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_produ_dialog_edit_response), dialog, path_string, new_text, COLUMNS::ColumnProducto::NOMBRE_PRODUCTO));
+                                           dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_produ_dialog_edit_response),  path_string, new_text, COLUMNS::ColumnProducto::NOMBRE_PRODUCTO));
                                            dialog->set_default_response(Gtk::ResponseType::OK);
                                            dialog->show(); });
 
     cell_caducidad->signal_edited().connect([this](const Glib::ustring &path_string, const Glib::ustring &new_text)
-                                            {auto dialog = new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true);
+                                            {dialog.reset(new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true));
                                                 dialog->set_secondary_text("¿Desea editar el campo?");
-                                                dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_produ_dialog_edit_response), dialog, path_string, new_text, COLUMNS::ColumnProducto::CADUCIDAD));
+                                                dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_produ_dialog_edit_response),  path_string, new_text, COLUMNS::ColumnProducto::CADUCIDAD));
                                                 dialog->set_default_response(Gtk::ResponseType::OK);
                                                 dialog->show(); });
 
 
     cell_marca->signal_changed().connect([this](const Glib::ustring &path_string, const Gtk::TreeModel::iterator &val)
-                                         {auto dialog = new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true);
+                                         {dialog.reset(new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true));
                                             dialog->set_secondary_text("¿Desea editar el campo?");
-                                            dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_cell_marca_changed), dialog, path_string, val));
+                                            dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_cell_marca_changed),  path_string, val));
                                             dialog->set_default_response(Gtk::ResponseType::OK);
                                             dialog->show(); });
 
     cell_nota->signal_edited().connect([this](const Glib::ustring &path_string, const Glib::ustring &new_text)
-                                       {auto dialog = new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true);
+                                       {dialog.reset(new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true));
                                         dialog->set_secondary_text("¿Desea editar el campo?");
-                                        dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_produ_dialog_edit_response), dialog, path_string, new_text, COLUMNS::ColumnProducto::NOTA));
+                                        dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_produ_dialog_edit_response),  path_string, new_text, COLUMNS::ColumnProducto::NOTA));
                                         dialog->set_default_response(Gtk::ResponseType::OK);
                                         dialog->show(); });
 
     cell_piezas->signal_edited().connect([this](const Glib::ustring &path_string, const Glib::ustring &new_text)
-                                         {auto dialog = new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true);
+                                         {dialog.reset(new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true));
                                             dialog->set_secondary_text("¿Desea editar el campo?");
-                                            dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_produ_dialog_edit_response), dialog, path_string, new_text, COLUMNS::ColumnProducto::PIEZAS));
+                                            dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_produ_dialog_edit_response),path_string, new_text, COLUMNS::ColumnProducto::PIEZAS));
                                             dialog->set_default_response(Gtk::ResponseType::OK);
                                             dialog->show(); });
 
     cell_precio_u->signal_edited().connect([this](const Glib::ustring &path_string, const Glib::ustring &new_text)
-                                           {auto dialog = new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true);
+                                           {dialog.reset(new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true));
                                                 dialog->set_secondary_text("¿Desea editar el campo?");
-                                                dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_produ_dialog_edit_response), dialog, path_string, new_text, COLUMNS::ColumnProducto::PRECIO_U));
+                                                dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_produ_dialog_edit_response),path_string, new_text, COLUMNS::ColumnProducto::PRECIO_U));
                                                 dialog->set_default_response(Gtk::ResponseType::OK);
                                                 dialog->show(); });
 
     cell_categoria->signal_changed().connect([this](const Glib::ustring &path_string, const Gtk::TreeModel::iterator &val)
-                                            {auto dialog = new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true);
+                                            {dialog.reset(new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true));
                                                 dialog->set_secondary_text("¿Desea editar el campo?");
-                                                dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_cell_categoria_changed), dialog, path_string, val));
+                                                dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_cell_categoria_changed),  path_string, val));
                                                 dialog->set_default_response(Gtk::ResponseType::OK);
                                                 dialog->show(); });
 
     cell_subcategoria->signal_changed().connect([this](const Glib::ustring &path_string, const Gtk::TreeModel::iterator &val)
-                                               {auto dialog = new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true);
+                                               {dialog.reset(new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true));
                                                     dialog->set_secondary_text("¿Desea editar el campo?");
-                                                    dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_cell_subcategoria_changed), dialog, path_string, val));
+                                                    dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_cell_subcategoria_changed),  path_string, val));
                                                     dialog->set_default_response(Gtk::ResponseType::OK);
                                                     dialog->show(); });
 }
@@ -193,36 +211,36 @@ void Pos::init()
 
 void Pos::on_cell1_edited(const Glib::ustring &path_string, const Glib::ustring &new_text)
 {
-    auto dialog = new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true);
+    dialog.reset(new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true));
     dialog->set_secondary_text("¿Desea editar el campo?");
-    dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_prov_dialog_edit_response), dialog, path_string, new_text, COLUMNS::ColumnProveedor::NOMBRE));
+    dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_prov_dialog_edit_response),  path_string, new_text, COLUMNS::ColumnProveedor::NOMBRE));
     dialog->set_default_response(Gtk::ResponseType::OK);
     dialog->show();
 }
 
 void Pos::on_cell2_edited(const Glib::ustring &path_string, const Glib::ustring &new_text)
 {
-    auto dialog = new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true);
+    dialog.reset(new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true));
     dialog->set_secondary_text("¿Desea editar el campo?");
-    dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_prov_dialog_edit_response), dialog, path_string, new_text, COLUMNS::ColumnProveedor::TELEFONO));
+    dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_prov_dialog_edit_response), path_string, new_text, COLUMNS::ColumnProveedor::TELEFONO));
     dialog->set_default_response(Gtk::ResponseType::OK);
     dialog->show();
 }
 
 void Pos::on_cell3_edited(const Glib::ustring &path_string, const Glib::ustring &new_text)
 {
-    auto dialog = new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true);
+    dialog.reset(new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true));
     dialog->set_secondary_text("¿Desea editar el campo?");
-    dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_prov_dialog_edit_response), dialog, path_string, new_text, COLUMNS::ColumnProveedor::EMPRESA));
+    dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_prov_dialog_edit_response), path_string, new_text, COLUMNS::ColumnProveedor::EMPRESA));
     dialog->set_default_response(Gtk::ResponseType::OK);
     dialog->show();
 }
 
 void Pos::on_cell4_edited(const Glib::ustring &path_string, const Glib::ustring &new_text)
 {
-    auto dialog = new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true);
+    dialog.reset(new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true));
     dialog->set_secondary_text("¿Desea editar el campo?");
-    dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_prov_dialog_edit_response), dialog, path_string, new_text, COLUMNS::ColumnProveedor::EMAIL));
+    dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_prov_dialog_edit_response),path_string, new_text, COLUMNS::ColumnProveedor::EMAIL));
     dialog->set_default_response(Gtk::ResponseType::OK);
     dialog->show();
 }
@@ -249,7 +267,7 @@ void Pos::on_btn_add_clicked()
     catch (std::exception &e)
     {
         std::cout << e.what() << std::endl;
-        auto dialog = new Gtk::MessageDialog(*this, "Error al agregar un Registro", false, Gtk::MessageType::ERROR, Gtk::ButtonsType::OK, true);
+        dialog.reset(new Gtk::MessageDialog(*this, "Error al agregar un Registro", false, Gtk::MessageType::ERROR, Gtk::ButtonsType::OK, true));
         dialog->set_secondary_text(e.what());
         dialog->set_hide_on_close(true);
         dialog->show();
@@ -258,15 +276,15 @@ void Pos::on_btn_add_clicked()
 
 void Pos::on_btn_remove_clicked()
 {
-    auto dialog = new Gtk::MessageDialog(*this, "Eliminar", true, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true);
+    dialog.reset(new Gtk::MessageDialog(*this, "Eliminar", true, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true));
     dialog->set_secondary_text("¿Desea eliminar el registro?");
     dialog->property_text().set_value("Eliminar");
-    dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_prov_dialog_remove_response), dialog));
+    dialog->signal_response().connect(sigc::mem_fun(*this, &Pos::on_prov_dialog_remove_response));
     dialog->set_default_response(Gtk::ResponseType::OK);
     dialog->show();
 }
 
-void Pos::on_prov_dialog_remove_response(int response_id, Gtk::MessageDialog *dialog)
+void Pos::on_prov_dialog_remove_response(int response_id)
 {
     switch (response_id)
     {
@@ -289,7 +307,7 @@ void Pos::on_prov_dialog_remove_response(int response_id, Gtk::MessageDialog *di
             catch (std::exception &e)
             {
                 std::cout << e.what() << std::endl;
-                auto dialog = new Gtk::MessageDialog(*this, "Error al eliminar un Registro", false, Gtk::MessageType::ERROR, Gtk::ButtonsType::OK, true);
+                dialog.reset(new Gtk::MessageDialog(*this, "Error al eliminar un Registro", false, Gtk::MessageType::ERROR, Gtk::ButtonsType::OK, true));
                 dialog->set_secondary_text(e.what());
                 dialog->set_hide_on_close(true);
                 dialog->show();
@@ -297,7 +315,7 @@ void Pos::on_prov_dialog_remove_response(int response_id, Gtk::MessageDialog *di
         }
         else
         {
-            auto dialog = new Gtk::MessageDialog(*this, "Error al eliminar un Registro", false, Gtk::MessageType::ERROR, Gtk::ButtonsType::OK, true);
+            dialog.reset(new Gtk::MessageDialog(*this, "Error al eliminar un Registro", false, Gtk::MessageType::ERROR, Gtk::ButtonsType::OK, true));
             dialog->set_secondary_text("No hay ningun registro seleccionado");
             dialog->set_hide_on_close(true);
             dialog->show();
@@ -312,7 +330,7 @@ void Pos::on_prov_dialog_remove_response(int response_id, Gtk::MessageDialog *di
     }
 }
 
-void Pos::on_prov_dialog_edit_response(int response_id, Gtk::MessageDialog *dialog, const Glib::ustring &path_string, const Glib::ustring &new_text, const int &column)
+void Pos::on_prov_dialog_edit_response(int response_id, const Glib::ustring &path_string, const Glib::ustring &new_text, const int &column)
 {
     switch (response_id)
     {
@@ -357,7 +375,7 @@ void Pos::on_prov_dialog_edit_response(int response_id, Gtk::MessageDialog *dial
             catch (std::exception &e)
             {
                 std::cout << e.what() << std::endl;
-                auto dialog = new Gtk::MessageDialog(*this, "Error al editar un Registro", false, Gtk::MessageType::ERROR, Gtk::ButtonsType::OK, true);
+                dialog.reset(new Gtk::MessageDialog(*this, "Error al editar un Registro", false, Gtk::MessageType::ERROR, Gtk::ButtonsType::OK, true));
                 dialog->set_secondary_text(e.what());
                 dialog->set_hide_on_close(true);
                 dialog->signal_response().connect([&](int response_id) {

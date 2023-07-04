@@ -1,13 +1,15 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Created with Cambalache 0.12.1 -->
 <interface>
+  <!-- interface-name mainpos.ui -->
   <requires lib="gtk" version="4.0"/>
-  <object class="GtkAdjustment" id="pos_main"></object>
+  <object class="GtkAdjustment" id="pos_main"/>
   <object class="GtkBox" id="box_pos">
     <property name="orientation">1</property>
     <child>
       <object class="GtkRevealer">
         <property name="child">
-          <object class="GtkInfoBar"></object>
+          <object class="GtkInfoBar"/>
         </property>
       </object>
     </child>
@@ -32,7 +34,7 @@
                   <object class="GtkBox">
                     <property name="spacing">5</property>
                     <child>
-                       <object class="GtkEntry" id="ety_barras">
+                      <object class="GtkEntry" id="ety_barras">
                         <property name="hexpand">true</property>
                         <property name="placeholder-text">Ingresa un Codigo de Barras.</property>
                         <property name="primary-icon-name">input-keyboard-symbolic</property>
@@ -61,6 +63,11 @@
                         <property name="hexpand-set">true</property>
                         <property name="vexpand">true</property>
                         <property name="vexpand-set">true</property>
+                        <child>
+                          <object class="GtkTreeView" id="tree_venta">
+                            <property name="enable-grid-lines">2</property>
+                          </object>
+                        </child>
                       </object>
                     </child>
                     <child>
@@ -104,11 +111,13 @@
                         <child>
                           <object class="GtkFrame">
                             <property name="child">
-                              <object class="GtkSpinButton">
+                              <object class="GtkSpinButton" id="spin_ingreso">
                                 <property name="adjustment">pos_main</property>
+                                <property name="digits">2</property>
                                 <property name="margin-bottom">10</property>
                                 <property name="margin-end">10</property>
                                 <property name="margin-start">10</property>
+                                <property name="numeric">True</property>
                               </object>
                             </property>
                             <property name="label">Ingreso</property>
@@ -117,7 +126,7 @@
                         <child>
                           <object class="GtkFrame">
                             <property name="child">
-                              <object class="GtkLabel">
+                              <object class="GtkLabel" id="lbl_cambio">
                                 <property name="label">$&lt;span font_desc='30'&gt;0.00&lt;/span&gt;</property>
                                 <property name="margin-bottom">10</property>
                                 <property name="margin-end">10</property>
@@ -129,10 +138,23 @@
                           </object>
                         </child>
                         <child>
-                          <object class="GtkButton">
-                            <property name="icon-name">system-switch-user-symbolic</property>
-                            <property name="label">Pagar</property>
-                            <property name="css-classes">suggested-action</property>
+                          <object class="GtkBox">
+                            <property name="homogeneous">true</property>
+                            <property name="spacing">5</property>
+                            <child>
+                              <object class="GtkButton" id="btn_pago_efectivo">
+                                <property name="css-classes">suggested-action</property>
+                                <property name="icon-name">system-switch-user-symbolic</property>
+                                <property name="label">Efectivo</property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="btn_pago_tarjeta">
+                                <property name="css-classes">suggested-action</property>
+                                <property name="icon-name">system-switch-user-symbolic</property>
+                                <property name="label">Tarjeta</property>
+                              </object>
+                            </child>
                           </object>
                         </child>
                       </object>
@@ -188,10 +210,10 @@
                         </child>
                         <child>
                           <object class="GtkButton" id="btn_remove_prov">
+                            <property name="css-classes">destructive-action</property>
                             <property name="icon-name">list-remove-symbolic</property>
                             <property name="margin-bottom">0</property>
                             <property name="tooltip-text">Elimina un registro.</property>
-                            <property name="css-classes">destructive-action</property>
                           </object>
                         </child>
                       </object>
@@ -238,21 +260,25 @@
                         <property name="hexpand">true</property>
                         <property name="hexpand-set">true</property>
                         <child>
-                          <object class="GtkButton" id="btn_add_produ">
-                            <property name="icon-name">list-add-symbolic</property>
-                            <property name="margin-bottom">0</property>
-                            <property name="tooltip-text">AÃ±ade un nuevo registro.</property>
+                          <object class="GtkButton" id="btn_add_piezas">
+                            <property name="css-classes">suggested-action</property>
+                            <property name="icon-name">insert-object-symbolic</property>
+                            <property name="tooltip-text">Recibe pedido.</property>
                           </object>
                         </child>
                         <child>
-                          <object class="GtkButton"></object>
+                          <object class="GtkButton" id="btn_add_produ">
+                            <property name="icon-name">list-add-symbolic</property>
+                            <property name="margin-bottom">0</property>
+                            <property name="tooltip-text">Añade un nuevo registro.</property>
+                          </object>
                         </child>
                         <child>
                           <object class="GtkButton" id="btn_remove_produ">
+                            <property name="css-classes">destructive-action</property>
                             <property name="icon-name">list-remove-symbolic</property>
                             <property name="margin-bottom">0</property>
                             <property name="tooltip-text">Elimina un registro.</property>
-                            <property name="css-classes">destructive-action</property>
                           </object>
                         </child>
                         <child>
@@ -260,9 +286,6 @@
                             <property name="label">Ver Stock bajo.</property>
                             <property name="tooltip-text">Filtra todo lo que tenga un stock por debajo de 10 articulos.</property>
                           </object>
-                        </child>
-                        <child>
-                          <object class="GtkButton"></object>
                         </child>
                       </object>
                     </child>
@@ -296,7 +319,7 @@
                               </object>
                             </child>
                             <child>
-                              <object class="GtkSpinButton"></object>
+                              <object class="GtkSpinButton"/>
                             </child>
                             <child>
                               <object class="GtkMenuButton">
@@ -318,7 +341,7 @@
                             <property name="vexpand">true</property>
                             <property name="vexpand-set">true</property>
                             <child>
-                              <object class="GtkTreeView" id="tree_repor"></object>
+                              <object class="GtkTreeView" id="tree_repor"/>
                             </child>
                           </object>
                         </child>

@@ -122,7 +122,7 @@ void Pos::init_producto()
     lbl_cont_prod->set_text("Productos: " + std::to_string(cont_prod));
 }
 
-void Pos::on_cell_marca_changed(int response_id, Gtk::MessageDialog *dialog, const Glib::ustring &path_string, const Gtk::TreeModel::iterator &val)
+void Pos::on_cell_marca_changed(int response_id, const Glib::ustring &path_string, const Gtk::TreeModel::iterator &val)
 {
     switch (response_id)
     {
@@ -135,20 +135,20 @@ void Pos::on_cell_marca_changed(int response_id, Gtk::MessageDialog *dialog, con
             row_producto = *iter;
             row_producto[m_Columns_prod.marca] = (*val)[m_ColumnsCombo.m_col_name].operator Glib::ustring();
         }
-        dialog->hide();
+        dialog->close();
     }
     break;
     case Gtk::ResponseType::CANCEL:
-        dialog->hide();
+        dialog->close();
         break;
 
     default:
-        dialog->hide();
+        dialog->close();
         break;
     }
 }
 
-void Pos::on_cell_categoria_changed(int response_id, Gtk::MessageDialog *dialog, const Glib::ustring &path_string, const Gtk::TreeModel::iterator &val)
+void Pos::on_cell_categoria_changed(int response_id, const Glib::ustring &path_string, const Gtk::TreeModel::iterator &val)
 {
     switch (response_id)
     {
@@ -171,20 +171,20 @@ void Pos::on_cell_categoria_changed(int response_id, Gtk::MessageDialog *dialog,
                 cell_subcategoria->property_model() = m_refTreeModelSubCategoria;
             }
         }
-        dialog->hide();
+        dialog->close();
     }
     break;
     case Gtk::ResponseType::CANCEL:
-        dialog->hide();
+        dialog->close();
         break;
 
     default:
-        dialog->hide();
+        dialog->close();
         break;
     }
 }
 
-void Pos::on_cell_subcategoria_changed(int response_id, Gtk::MessageDialog *dialog, const Glib::ustring &path_string, const Gtk::TreeModel::iterator &val)
+void Pos::on_cell_subcategoria_changed(int response_id, const Glib::ustring &path_string, const Gtk::TreeModel::iterator &val)
 {
     switch (response_id)
     {
@@ -197,15 +197,15 @@ void Pos::on_cell_subcategoria_changed(int response_id, Gtk::MessageDialog *dial
             row_producto = *iter;
             row_producto[m_Columns_prod.subcategoria] = (*val)[m_ColumnsSubCategoria.m_col_name].operator Glib::ustring();
         }
-        dialog->hide();
+        dialog->close();
     }
     break;
     case Gtk::ResponseType::CANCEL:
-        dialog->hide();
+        dialog->close();
         break;
 
     default:
-        dialog->hide();
+        dialog->close();
         break;
     }
 }
@@ -221,7 +221,7 @@ void Pos::on_cell_data_func_u(Gtk::CellRenderer *renderer, const Gtk::TreeModel:
     }
 }
 
-void Pos::on_produ_dialog_edit_response(int response_id, Gtk::MessageDialog *dialog, const Glib::ustring &path_string, const Glib::ustring &new_text, const int &column)
+void Pos::on_produ_dialog_edit_response(int response_id, const Glib::ustring &path_string, const Glib::ustring &new_text, const int &column)
 {
     switch (response_id)
     {
@@ -238,12 +238,15 @@ void Pos::on_produ_dialog_edit_response(int response_id, Gtk::MessageDialog *dia
                 {
                     auto sku_nue = std::stol(new_text);
                     auto sku_ant = std::to_string((*iter)[m_Columns_prod.sku]);
-                    db->command("Insert into producto (sku) values (" + new_text + ")");
-                    if (db->get_rc() == SQLITE_CONSTRAINT)
+                    if ((*iter)[m_Columns_prod.sku] != sku_nue && (*iter)[m_Columns_prod.sku] != 0)
                     {
+                        std::cout << "insert into producto (sku,nombre,caducidad,marca,nota,piezas,precio_u,categoria,subcategoria) select " + new_text + ",nombre,caducidad,marca,nota,piezas,precio_u,categoria,subcategoria from producto where sku = " + sku_ant << std::endl;
                         db->command("insert into producto (sku,nombre,caducidad,marca,nota,piezas,precio_u,categoria,subcategoria) select " + new_text + ",nombre,caducidad,marca,nota,piezas,precio_u,categoria,subcategoria from producto where sku = " + sku_ant + "");
                         db->command("delete from producto where sku = " + sku_ant);
                     }
+                    else
+                        db->command("Insert into producto (sku) values (" + new_text + ")");
+
                     (*iter)[m_Columns_prod.sku] = sku_nue;
                 }
                 break;
@@ -303,24 +306,29 @@ void Pos::on_produ_dialog_edit_response(int response_id, Gtk::MessageDialog *dia
             catch (std::exception &e)
             {
                 std::cout << e.what() << std::endl;
-                auto dialog = new Gtk::MessageDialog(*this, "Error al editar un Registro", false, Gtk::MessageType::ERROR, Gtk::ButtonsType::OK, true);
-                dialog->set_secondary_text(e.what());
-                dialog->signal_response().connect([dialog](int response)
-                                                  { dialog->hide(); });
-                dialog->set_hide_on_close(true);
-                dialog->show();
+                dialog_error.reset(new Gtk::MessageDialog(*this, "Error al editar un Registro", false, Gtk::MessageType::ERROR, Gtk::ButtonsType::OK, true));
+                dialog_error->set_secondary_text(e.what());
+                dialog_error->signal_response().connect([this](int response)
+                                                  { dialog_error->close(); });
+                dialog_error->set_hide_on_close(true);
+                dialog_error->show();
             }
         }
-        dialog->hide();
+        dialog->close();
     }
     break;
     case Gtk::ResponseType::CANCEL:
-        dialog->hide();
+        dialog->close();
         break;
     default:
-        dialog->hide();
+        dialog->close();
         break;
     }
+}
+
+void Pos::cierra_dialogo(int response_id)
+{
+    dialog->close();
 }
 
 void Pos::llena_subca()

@@ -3,7 +3,7 @@
 
 int main(int argc, char *argv[])
 {
-
+    // g++ main.cpp -o main $(pkg-config gtkmm-4.0 --cflags --libs) -lsqlite3 && ./main
     // std::ifstream file("dbase.db");
     // if (file.good())
     // {
