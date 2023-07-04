@@ -6,29 +6,29 @@
 	CompilerName=""
 	CompilerVersion=""
 	OSName="Linux"
-	Hostname="Warmachine"
-	OSRelease="6.1.31-2-MANJARO"
-	OSVersion="#1 SMP PREEMPT_DYNAMIC Sun Jun  4 12:31:46 UTC 2023"
+	Hostname="CLAP2302-2764"
+	OSRelease="5.15.90.1-microsoft-standard-WSL2"
+	OSVersion="#1 SMP Fri Jan 27 02:56:13 UTC 2023"
 	OSPlatform="x86_64"
 	Is64Bits="1"
-	VendorString="AuthenticAMD"
-	VendorID="Advanced Micro Devices"
-	FamilyID="25"
-	ModelID="80"
-	ProcessorCacheSize="512"
+	VendorString="GenuineIntel"
+	VendorID="Intel Corporation"
+	FamilyID="6"
+	ModelID="154"
+	ProcessorCacheSize="12288"
 	NumberOfLogicalCPU="12"
 	NumberOfPhysicalCPU="6"
-	TotalVirtualMemory="4095"
-	TotalPhysicalMemory="31379"
+	TotalVirtualMemory="2048"
+	TotalPhysicalMemory="7789"
 	LogicalProcessorsPerPhysical="2"
-	ProcessorClockFrequency="4449.59"
+	ProcessorClockFrequency="2611.2"
 	>
 	<Testing>
-		<StartDateTime>Jul 03 19:39 CST</StartDateTime>
-		<StartTestTime>1688434795</StartTestTime>
+		<StartDateTime>Jul 03 19:57 CST</StartDateTime>
+		<StartTestTime>1688435875</StartTestTime>
 		<TestList/>
-		<EndDateTime>Jul 03 19:39 CST</EndDateTime>
-		<EndTestTime>1688434795</EndTestTime>
+		<EndDateTime>Jul 03 19:57 CST</EndDateTime>
+		<EndTestTime>1688435875</EndTestTime>
 		<ElapsedMinutes>0</ElapsedMinutes>
 	</Testing>
 </Site>

@@ -221,6 +221,23 @@ void Pos::on_cell_data_func_u(Gtk::CellRenderer *renderer, const Gtk::TreeModel:
     }
 }
 
+void Pos::on_btn_remove_prod_clicked(){
+    dialog.reset(new Gtk::MessageDialog(*this, "Eliminar", true, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true));
+    dialog->set_secondary_text("¿Desea eliminar el producto?");
+    dialog->signal_response().connect([this](int response){
+        if(response == Gtk::ResponseType::OK){
+            auto iter = tree_prod->get_selection()->get_selected();
+            if(iter){
+                db->command("delete from producto where sku = " + std::to_string((*iter)[m_Columns_prod.sku]));
+                m_refTreeModel_prod->erase(iter);
+                lbl_cont_prod->set_text("Productos: " + std::to_string(m_refTreeModel_prod->children().size()));
+            }
+        }
+        dialog->close();
+    });
+    dialog->show();
+}
+
 void Pos::on_produ_dialog_edit_response(int response_id, const Glib::ustring &path_string, const Glib::ustring &new_text, const int &column)
 {
     switch (response_id)

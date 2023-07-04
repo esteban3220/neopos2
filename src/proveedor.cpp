@@ -76,6 +76,7 @@ void Pos::carga_señales()
     controller->signal_key_pressed().connect(sigc::mem_fun(*this, &Pos::on_spin_ingreso_activate),false);
     btn_pago_efectivo->signal_clicked().connect(sigc::mem_fun(*this, &Pos::on_btn_pago_efectivo_clicked));
     btn_pago_tarjeta->signal_clicked().connect(sigc::mem_fun(*this, &Pos::on_btn_pago_tarjeta_clicked));
+    btn_remove_produ->signal_clicked().connect(sigc::mem_fun(*this, &Pos::on_btn_remove_prod_clicked));
 
     add_controller(controller);
 

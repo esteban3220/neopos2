@@ -226,6 +226,7 @@ private:
 
     void on_btn_add_clicked();
     void on_btn_remove_clicked();
+    void on_btn_remove_prod_clicked();
     bool on_spin_ingreso_activate(guint keyval, guint, Gdk::ModifierType state);
     double total_vcarrito = 0;
 
