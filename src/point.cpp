@@ -169,10 +169,14 @@ void Pos::on_btn_pago_tarjeta_clicked()
             {
                 if (ety_folio.get_text().empty())
                     return;
+<<<<<<< HEAD
                 std::cout << "" << total_vcarrito << " "<< spin_ingreso->get_value()<< std::endl;
                 std::cout << "" << (total_vcarrito == spin_ingreso->get_value()) << std::endl;
                 std::cout << "" << (total_vcarrito-spin_ingreso->get_value()) << std::endl;
                 if(total_vcarrito == (float)spin_ingreso->get_value())
+=======
+                if(total_vcarrito - spin_ingreso->get_value() < 0.001)
+>>>>>>> 192dd7e (Correccion de Precios)
                 {
                     folio_tarjetaa  << ety_folio.get_text() << " - " << spin_ingreso->get_text() <<" | ";
                     pag_tarjeta = true;
