@@ -6,6 +6,7 @@
 #include <map>
 #include <vector>
 #include "sqlite.cpp"
+#include <sstream>
 
 class Pos : public Gtk::Window
 {
@@ -227,8 +228,11 @@ private:
     void on_btn_add_clicked();
     void on_btn_remove_clicked();
     void on_btn_remove_prod_clicked();
+    void cierra_venta();
     bool on_spin_ingreso_activate(guint keyval, guint, Gdk::ModifierType state);
-    float total_vcarrito = 0;
+    float total_vcarrito = 0.0f;
+    bool pag_efectivo = false, pag_tarjeta = false;
+    std::stringstream folio_tarjetaa;
 
     Glib::RefPtr<Gtk::EntryCompletion> completion_pos = Gtk::EntryCompletion::create();
 

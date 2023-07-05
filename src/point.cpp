@@ -3,8 +3,8 @@
 #include "Pos.hpp"
 #include "columns.hpp"
 #include <vector>
-#include <sstream>
 #include <iomanip>
+#include <cmath>
 
 void Pos::init_venta()
 {
@@ -17,12 +17,21 @@ void Pos::init_venta()
     tree_venta->append_column_numeric("Precio T", m_Columns_venta.precio_t, "$%.2f");
 }
 
+void Pos::cierra_venta()
+{
+    pag_efectivo = true;
+    on_btn_pago_efectivo_clicked();
+}
+
 void Pos::on_btn_pago_efectivo_clicked()
 {
     if (total_vcarrito != 0)
     {
+        std::stringstream ss;
+        std::string tipo;
         for (auto row : ModelCarroVenta->children())
         {
+            ss << row[m_Columns_venta.sku] << "|" << row[m_Columns_venta.cantidad] << "|" << row[m_Columns_venta.nombre] << "|" << row[m_Columns_venta.precio_u] << "|" << row[m_Columns_venta.precio_t] << "&";
             for (auto row_prod : m_refTreeModel_prod->children())
             {
                 if (row[m_Columns_venta.sku] == row_prod[m_Columns_prod.sku])
@@ -31,15 +40,23 @@ void Pos::on_btn_pago_efectivo_clicked()
                     if (diff >= 0)
                         db->command("UPDATE producto SET piezas = " + std::to_string(diff) + " WHERE sku = " + std::to_string(row_prod[m_Columns_prod.sku]) + ";");
                     row_prod[m_Columns_prod.piezas] = diff;
+                    break;
                 }
             }
         }
-        // db->command("INSERT INTO venta (total, fecha) VALUES (" + std::to_string(total_vcarrito) + ", CURRENT_TIMESTAMP);");
+        if (pag_tarjeta)
+            tipo = "Tarjeta";
+        if (pag_efectivo)
+            tipo = "Efectivo";
+        if (pag_efectivo && pag_tarjeta)
+            tipo = "Mixto";
 
-        // db->command("INSERT INTO pago (tipo, monto, cambio, fecha) VALUES ('Efectivo', " + std::to_string(total_vcarrito) + ", " + std::to_string(spin_ingreso->get_value() - total_vcarrito) + ", CURRENT_TIMESTAMP);");
-        total_vcarrito = 0;
-        // spin_ingreso->set_value(0);
-        //  lbl_cambio->set_markup("$<span font_desc='50'>0.00</span>");
+        db->command("INSERT INTO venta VALUES (null,'" + tipo + "', " + std::to_string(total_vcarrito) + ", " + spin_ingreso->get_text() + " , " + lbl_cambio->get_text().substr(1, lbl_cambio->get_text().size()) + ",'" + folio_tarjetaa.str() + "' , datetime('now','localtime') , '" + ss.str() + "');");
+        folio_tarjetaa.str("");
+        folio_tarjetaa.clear();
+        pag_efectivo = false;
+        pag_tarjeta = false;
+        total_vcarrito = 0.0f;
         lbl_precio_total->set_markup("$<span font_desc='50'>0.00</span>");
         ModelCarroVenta->clear();
     }
@@ -96,9 +113,11 @@ void Pos::add_articulo_venta()
 
 void Pos::on_spin_ingreso_changed()
 {
-    std::stringstream ss;
+    std::stringstream ss, total;
+    total << std::fixed << std::setprecision(2) << total_vcarrito;
+    total_vcarrito = std::stof(total.str());
     ss << std::fixed << std::setprecision(2) << spin_ingreso->get_value() - total_vcarrito;
-    if (spin_ingreso->get_value() - total_vcarrito < 0)
+    if (std::stof(ss.str()) < 0)
     {
         lbl_cambio->set_markup("$<span font_desc='50' foreground='red'>" + ss.str() + "</span>");
         btn_pago_efectivo->set_sensitive(false);
@@ -123,17 +142,23 @@ bool Pos::on_spin_ingreso_activate(guint keyval, guint, Gdk::ModifierType state)
 
 void Pos::on_btn_pago_tarjeta_clicked()
 {
-    if (total_vcarrito - spin_ingreso->get_value() < 0)
+    if (((float)spin_ingreso->get_value() - total_vcarrito) >= 0.01f)
     {
         dialog.reset(new Gtk::MessageDialog(*this, "El monto ingresado es mayor a la cuenta", false, Gtk::MessageType::ERROR, Gtk::ButtonsType::OK, true));
         dialog->set_title("Pago con Tarjeta");
         dialog->signal_response().connect(sigc::mem_fun(*this, &Pos::cierra_dialogo));
         dialog->set_hide_on_close(true);
         dialog->show();
+        std::cout << "" << total_vcarrito << " " << spin_ingreso->get_value() << std::endl;
+        std::cout << "" << (total_vcarrito == spin_ingreso->get_value()) << std::endl;
+        std::cout << "" << (total_vcarrito - spin_ingreso->get_value()) << std::endl;
         return;
     }
     if (total_vcarrito != 0 && spin_ingreso->get_value() != 0)
     {
+        std::cout << "" << total_vcarrito << " " << spin_ingreso->get_value() << std::endl;
+        std::cout << "" << (total_vcarrito == spin_ingreso->get_value()) << std::endl;
+        std::cout << "" << (total_vcarrito - spin_ingreso->get_value()) << std::endl;
         dialog.reset(new Gtk::MessageDialog(*this, "Inserte el Numero de Folio de Transaccion Aprobada.", false, Gtk::MessageType::INFO, Gtk::ButtonsType::OK_CANCEL, true));
         dialog->set_secondary_text("Si no se inserta el numero de folio, la venta no se registrara.");
         dialog->set_title("Pago con Tarjeta");
@@ -147,8 +172,10 @@ void Pos::on_btn_pago_tarjeta_clicked()
                 std::cout << "" << total_vcarrito << " "<< spin_ingreso->get_value()<< std::endl;
                 std::cout << "" << (total_vcarrito == spin_ingreso->get_value()) << std::endl;
                 std::cout << "" << (total_vcarrito-spin_ingreso->get_value()) << std::endl;
-                if(total_vcarrito <= 0)
+                if(total_vcarrito == (float)spin_ingreso->get_value())
                 {
+                    folio_tarjetaa  << ety_folio.get_text() << " - " << spin_ingreso->get_text() <<" | ";
+                    pag_tarjeta = true;
                     on_btn_pago_efectivo_clicked();
                     dialog->close();
                     return;
@@ -159,9 +186,10 @@ void Pos::on_btn_pago_tarjeta_clicked()
                     total_vcarrito -= spin_ingreso->get_value();
                     ss << std::fixed << std::setprecision(2) << total_vcarrito;
                     lbl_precio_total->set_markup("$<span font_desc='50'>" + ss.str() + "</span>");
-                    //lbl_cambio->set_markup("$<span font_desc='50'>0.00</span>");
+                    folio_tarjetaa  << ety_folio.get_text() << " - " << spin_ingreso->get_text() <<" | ";
+                    pag_tarjeta = true;
                     spin_ingreso->set_value(0);
-                    ety_barras->grab_focus();
+                    spin_ingreso->grab_focus();
                     dialog->close();
                     return;
                 }

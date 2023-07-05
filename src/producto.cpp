@@ -278,7 +278,7 @@ void Pos::on_produ_dialog_edit_response(int response_id, const Glib::ustring &pa
                 case COLUMNS::ColumnProducto::CADUCIDAD:
                 {
 
-                    db->command("update producto set caducidad = '" + new_text + "' where sku = " + std::to_string((*iter)[m_Columns_prod.sku]));
+                    db->command("update producto set caducidad = DATE('" + new_text + "') where sku = " + std::to_string((*iter)[m_Columns_prod.sku]));
                     (*iter)[m_Columns_prod.caducidad] = new_text;
                     break;
                 }

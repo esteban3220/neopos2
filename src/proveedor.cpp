@@ -26,7 +26,7 @@ Pos::Pos()
     ety_barras->set_completion(completion_pos);
     completion_pos->set_model(m_refTreeModel_prod);
     completion_pos->set_text_column(m_Columns_prod.nombre);
-    spin_ingreso->set_adjustment(Gtk::Adjustment::create(0.0, 0.0, 100000.0));
+    spin_ingreso->set_adjustment(Gtk::Adjustment::create(0.0, 0.0, 100000.0, 1.0, 10.0, 0.0));
     init_venta();
 }
 
@@ -74,7 +74,7 @@ void Pos::carga_señales()
     completion_pos->signal_match_selected().connect(sigc::mem_fun(*this, &Pos::add_match_arcticulo), false);
     spin_ingreso->signal_value_changed().connect(sigc::mem_fun(*this, &Pos::on_spin_ingreso_changed));
     controller->signal_key_pressed().connect(sigc::mem_fun(*this, &Pos::on_spin_ingreso_activate),false);
-    btn_pago_efectivo->signal_clicked().connect(sigc::mem_fun(*this, &Pos::on_btn_pago_efectivo_clicked));
+    btn_pago_efectivo->signal_clicked().connect(sigc::mem_fun(*this, &Pos::cierra_venta));
     btn_pago_tarjeta->signal_clicked().connect(sigc::mem_fun(*this, &Pos::on_btn_pago_tarjeta_clicked));
     btn_remove_produ->signal_clicked().connect(sigc::mem_fun(*this, &Pos::on_btn_remove_prod_clicked));
 
@@ -98,7 +98,7 @@ void Pos::carga_señales()
 
     cell_caducidad->signal_edited().connect([this](const Glib::ustring &path_string, const Glib::ustring &new_text)
                                             {dialog.reset(new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true));
-                                                dialog->set_secondary_text("¿Desea editar el campo?");
+                                                dialog->set_secondary_text("¿Desea editar el campo?\nEl formato de la fecha es: aaaa-mm-dd");
                                                 dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_produ_dialog_edit_response),  path_string, new_text, COLUMNS::ColumnProducto::CADUCIDAD));
                                                 dialog->set_default_response(Gtk::ResponseType::OK);
                                                 dialog->show(); });
