@@ -38,8 +38,8 @@ void Pos::on_btn_pago_efectivo_clicked()
 
         // db->command("INSERT INTO pago (tipo, monto, cambio, fecha) VALUES ('Efectivo', " + std::to_string(total_vcarrito) + ", " + std::to_string(spin_ingreso->get_value() - total_vcarrito) + ", CURRENT_TIMESTAMP);");
         total_vcarrito = 0;
-        //spin_ingreso->set_value(0);
-        // lbl_cambio->set_markup("$<span font_desc='50'>0.00</span>");
+        // spin_ingreso->set_value(0);
+        //  lbl_cambio->set_markup("$<span font_desc='50'>0.00</span>");
         lbl_precio_total->set_markup("$<span font_desc='50'>0.00</span>");
         ModelCarroVenta->clear();
     }
@@ -144,7 +144,10 @@ void Pos::on_btn_pago_tarjeta_clicked()
             {
                 if (ety_folio.get_text().empty())
                     return;
-                if(total_vcarrito == spin_ingreso->get_value())
+                std::cout << "" << total_vcarrito << " "<< spin_ingreso->get_value()<< std::endl;
+                std::cout << "" << (total_vcarrito == spin_ingreso->get_value()) << std::endl;
+                std::cout << "" << (total_vcarrito-spin_ingreso->get_value()) << std::endl;
+                if(total_vcarrito <= 0)
                 {
                     on_btn_pago_efectivo_clicked();
                     dialog->close();

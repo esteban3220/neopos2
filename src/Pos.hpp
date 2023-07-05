@@ -228,7 +228,7 @@ private:
     void on_btn_remove_clicked();
     void on_btn_remove_prod_clicked();
     bool on_spin_ingreso_activate(guint keyval, guint, Gdk::ModifierType state);
-    double total_vcarrito = 0;
+    float total_vcarrito = 0;
 
     Glib::RefPtr<Gtk::EntryCompletion> completion_pos = Gtk::EntryCompletion::create();
 

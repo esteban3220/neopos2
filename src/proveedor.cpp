@@ -26,7 +26,7 @@ Pos::Pos()
     ety_barras->set_completion(completion_pos);
     completion_pos->set_model(m_refTreeModel_prod);
     completion_pos->set_text_column(m_Columns_prod.nombre);
-    spin_ingreso->set_adjustment(Gtk::Adjustment::create(0.0, 0.0, 100000.0, 1.0, 2.0, 2.0));
+    spin_ingreso->set_adjustment(Gtk::Adjustment::create(0.0, 0.0, 100000.0));
     init_venta();
 }
 
