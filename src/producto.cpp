@@ -221,10 +221,12 @@ void Pos::on_cell_data_func_u(Gtk::CellRenderer *renderer, const Gtk::TreeModel:
     }
 }
 
-void Pos::on_btn_remove_prod_clicked(){
+void Pos::on_btn_remove_prod_clicked()
+{
     dialog.reset(new Gtk::MessageDialog(*this, "Eliminar", true, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true));
     dialog->set_secondary_text("¿Desea eliminar el producto?");
-    dialog->signal_response().connect([this](int response){
+    dialog->signal_response().connect([this](int response)
+                                      {
         if(response == Gtk::ResponseType::OK){
             auto iter = tree_prod->get_selection()->get_selected();
             if(iter){
@@ -233,8 +235,7 @@ void Pos::on_btn_remove_prod_clicked(){
                 lbl_cont_prod->set_text("Productos: " + std::to_string(m_refTreeModel_prod->children().size()));
             }
         }
-        dialog->close();
-    });
+        dialog->close(); });
     dialog->show();
 }
 
@@ -326,7 +327,7 @@ void Pos::on_produ_dialog_edit_response(int response_id, const Glib::ustring &pa
                 dialog_error.reset(new Gtk::MessageDialog(*this, "Error al editar un Registro", false, Gtk::MessageType::ERROR, Gtk::ButtonsType::OK, true));
                 dialog_error->set_secondary_text(e.what());
                 dialog_error->signal_response().connect([this](int response)
-                                                  { dialog_error->close(); });
+                                                        { dialog_error->close(); });
                 dialog_error->set_hide_on_close(true);
                 dialog_error->show();
             }
@@ -346,6 +347,80 @@ void Pos::on_produ_dialog_edit_response(int response_id, const Glib::ustring &pa
 void Pos::cierra_dialogo(int response_id)
 {
     dialog->close();
+}
+
+void Pos::init_popover_articulo()
+{
+    Gtk::Box b(Gtk::Orientation::VERTICAL);
+    b.append(ety_articulo_popover);
+    b.append(lbl_articulo_popover);
+    b.append(spin_cantidad_articulo_popover);
+    b.append(btn_add_articulo_popover);
+    b.set_spacing(5);
+    popover_ingreso_articulos.set_child(b);
+    popover_ingreso_articulos.set_position(Gtk::PositionType::TOP);
+    popover_ingreso_articulos.set_parent(*btn_add_piezas);
+    btn_add_articulo_popover.set_label("Agregar");
+    ety_articulo_popover.set_placeholder_text("Inserte el SKU del articulo");
+}
+
+void Pos::add_articulo_venta_popover()
+{
+    try
+    {
+        for (auto row : m_refTreeModel_prod->children())
+        {
+            if (row[m_Columns_prod.sku] == std::stoll(ety_articulo_popover.get_text()))
+            {
+                lbl_articulo_popover.set_text(row[m_Columns_prod.nombre]);
+                break;
+            }
+        }
+    }
+    catch (std::exception &e)
+    {
+        std::cout << e.what() << std::endl;
+    }
+}
+
+void Pos::add_btn_articulo_venta_popover()
+{
+    if (lbl_articulo_popover.get_text().empty() || spin_cantidad_articulo_popover.get_value() == 0 || ety_articulo_popover.get_text().empty())
+    {
+        dialog.reset(new Gtk::MessageDialog(*this, "Error al agregar articulo", false, Gtk::MessageType::ERROR, Gtk::ButtonsType::OK, true));
+        dialog->set_secondary_text("No se puede agregar un articulo sin nombre, sin cantidad o sin SKU");
+        dialog->signal_response().connect([this](int response)
+                                                { dialog->close(); });
+        dialog->set_hide_on_close(true);
+        dialog->show();
+        return;
+    }
+    else
+    {
+        popover_ingreso_articulos.popdown();
+        dialog.reset(new Gtk::MessageDialog(*this, "Agregar articulo", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::YES_NO, true));
+        dialog->set_secondary_text("¿Desea agregar " + std::to_string(spin_cantidad_articulo_popover.get_value_as_int()) + ", " + lbl_articulo_popover.get_text() + " a la venta?");
+        dialog->signal_response().connect([this](int response)
+                                          { if (response == Gtk::ResponseType::YES)
+                                            {
+                                                db->command("update producto set piezas = piezas + " + std::to_string(spin_cantidad_articulo_popover.get_value_as_int()) + " where sku = " + ety_articulo_popover.get_text());
+                                                for (auto row : m_refTreeModel_prod->children()) 
+                                                {
+                                                    if (row[m_Columns_prod.sku] == std::stoll(ety_articulo_popover.get_text()))
+                                                    {
+                                                        row[m_Columns_prod.piezas] = (row[m_Columns_prod.piezas]) + spin_cantidad_articulo_popover.get_value_as_int();
+                                                        break;
+                                                    }
+                                                }
+                                            }else if (response == Gtk::ResponseType::NO)
+                                                {
+                                                    dialog->close();
+                                                }
+                                            dialog->close();
+                                            dialog->set_default_response(Gtk::ResponseType::NO);
+                                             });
+        dialog->show();                     
+    }
 }
 
 void Pos::llena_subca()

@@ -27,7 +27,9 @@ Pos::Pos()
     completion_pos->set_model(m_refTreeModel_prod);
     completion_pos->set_text_column(m_Columns_prod.nombre);
     spin_ingreso->set_adjustment(Gtk::Adjustment::create(0.0, 0.0, 100000.0, 1.0, 10.0, 0.0));
+    spin_cantidad_articulo_popover.set_adjustment(Gtk::Adjustment::create(0.0, 0.0, 100000.0, 1.0, 10.0, 0.0));
     init_venta();
+    init_popover_articulo();
 }
 
 void Pos::cargar_glade()
@@ -50,6 +52,7 @@ void Pos::cargar_glade()
     lbl_cambio = builder->m_refBuilder->get_widget<Gtk::Label>("lbl_cambio");
     btn_pago_efectivo = builder->m_refBuilder->get_widget<Gtk::Button>("btn_pago_efectivo");
     btn_pago_tarjeta = builder->m_refBuilder->get_widget<Gtk::Button>("btn_pago_tarjeta");
+    btn_add_piezas = builder->m_refBuilder->get_widget<Gtk::Button>("btn_add_piezas");
 
     lbl_precio_total->set_markup("$<span font_desc='50'>0.00</span>");
     stack_switcher.set_stack(*stack_main_pos);
@@ -77,6 +80,9 @@ void Pos::carga_señales()
     btn_pago_efectivo->signal_clicked().connect(sigc::mem_fun(*this, &Pos::cierra_venta));
     btn_pago_tarjeta->signal_clicked().connect(sigc::mem_fun(*this, &Pos::on_btn_pago_tarjeta_clicked));
     btn_remove_produ->signal_clicked().connect(sigc::mem_fun(*this, &Pos::on_btn_remove_prod_clicked));
+    btn_add_piezas->signal_clicked().connect([this](){popover_ingreso_articulos.popup();});
+    ety_articulo_popover.signal_activate().connect(sigc::mem_fun(*this, &Pos::add_articulo_venta_popover));
+    btn_add_articulo_popover.signal_clicked().connect(sigc::mem_fun(*this, &Pos::add_btn_articulo_venta_popover));
 
     add_controller(controller);
 

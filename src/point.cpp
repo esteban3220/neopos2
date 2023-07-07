@@ -114,9 +114,7 @@ void Pos::add_articulo_venta()
 void Pos::on_spin_ingreso_changed()
 {
     std::stringstream ss, total;
-    total << std::fixed << std::setprecision(2) << total_vcarrito;
-    total_vcarrito = std::stof(total.str());
-    ss << std::fixed << std::setprecision(2) << spin_ingreso->get_value() - total_vcarrito;
+    ss << std::fixed << std::setprecision(2) << (float)spin_ingreso->get_value() - total_vcarrito;
     if (std::stof(ss.str()) < 0)
     {
         lbl_cambio->set_markup("$<span font_desc='50' foreground='red'>" + ss.str() + "</span>");
@@ -149,16 +147,10 @@ void Pos::on_btn_pago_tarjeta_clicked()
         dialog->signal_response().connect(sigc::mem_fun(*this, &Pos::cierra_dialogo));
         dialog->set_hide_on_close(true);
         dialog->show();
-        std::cout << "" << total_vcarrito << " " << spin_ingreso->get_value() << std::endl;
-        std::cout << "" << (total_vcarrito == spin_ingreso->get_value()) << std::endl;
-        std::cout << "" << (total_vcarrito - spin_ingreso->get_value()) << std::endl;
         return;
     }
     if (total_vcarrito != 0 && spin_ingreso->get_value() != 0)
     {
-        std::cout << "" << total_vcarrito << " " << spin_ingreso->get_value() << std::endl;
-        std::cout << "" << (total_vcarrito == spin_ingreso->get_value()) << std::endl;
-        std::cout << "" << (total_vcarrito - spin_ingreso->get_value()) << std::endl;
         dialog.reset(new Gtk::MessageDialog(*this, "Inserte el Numero de Folio de Transaccion Aprobada.", false, Gtk::MessageType::INFO, Gtk::ButtonsType::OK_CANCEL, true));
         dialog->set_secondary_text("Si no se inserta el numero de folio, la venta no se registrara.");
         dialog->set_title("Pago con Tarjeta");

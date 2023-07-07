@@ -229,6 +229,9 @@ private:
     void on_btn_remove_clicked();
     void on_btn_remove_prod_clicked();
     void cierra_venta();
+    void init_popover_articulo();
+    void add_articulo_venta_popover();
+    void add_btn_articulo_venta_popover();
     bool on_spin_ingreso_activate(guint keyval, guint, Gdk::ModifierType state);
     float total_vcarrito = 0.0f;
     bool pag_efectivo = false, pag_tarjeta = false;
@@ -244,11 +247,12 @@ protected:
     Gtk::StackSwitcher stack_switcher;
     Gtk::Stack *stack_main_pos;
     Gtk::MenuButton menu_button;
-    Gtk::Label *lbl_cambio;
-    Gtk::Popover popover_cal;
+    Gtk::Label *lbl_cambio,lbl_articulo_popover;
+    Gtk::Popover popover_ingreso_articulos;
     Gtk::SpinButton *spin_ingreso;
-    Gtk::Button *btn_pago_efectivo,*btn_pago_tarjeta;
-    Gtk::Entry ety_folio;
+    Gtk::Button *btn_pago_efectivo,*btn_pago_tarjeta,btn_add_articulo_popover,*btn_add_piezas;
+    Gtk::Entry ety_folio,ety_articulo_popover;
+    Gtk::SpinButton spin_cantidad_articulo_popover;
 
 
 public:
