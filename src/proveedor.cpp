@@ -4,6 +4,7 @@
 #include "producto.cpp"
 #include "point.cpp"
 #include "columns.hpp"
+#include "venta.cpp"
 #include <string>
 
 Pos::Pos()
@@ -30,6 +31,7 @@ Pos::Pos()
     spin_cantidad_articulo_popover.set_adjustment(Gtk::Adjustment::create(0.0, 0.0, 100000.0, 1.0, 10.0, 0.0));
     init_venta();
     init_popover_articulo();
+    init_reporte();
 }
 
 void Pos::cargar_glade()
@@ -53,6 +55,7 @@ void Pos::cargar_glade()
     btn_pago_efectivo = builder->m_refBuilder->get_widget<Gtk::Button>("btn_pago_efectivo");
     btn_pago_tarjeta = builder->m_refBuilder->get_widget<Gtk::Button>("btn_pago_tarjeta");
     btn_add_piezas = builder->m_refBuilder->get_widget<Gtk::Button>("btn_add_piezas");
+    tree_repor = builder->m_refBuilder->get_widget<Gtk::TreeView>("tree_repor");
 
     lbl_precio_total->set_markup("$<span font_desc='50'>0.00</span>");
     stack_switcher.set_stack(*stack_main_pos);

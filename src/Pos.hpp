@@ -24,6 +24,7 @@ private:
 
     Gtk::TreeModel::Row row_producto;
     Gtk::TreeModel::Row row_subcategoria;
+    Gtk::TreeModel::Row row_reporte;
 
     class ModelColumns : public Gtk::TreeModel::ColumnRecord
     {
@@ -80,7 +81,7 @@ private:
     void on_cell_data_func_u(Gtk::CellRenderer *renderer, const Gtk::TreeModel::const_iterator &iter);
     void on_cell_data_func_c(Gtk::CellRenderer *renderer, const Gtk::TreeModel::const_iterator &iter);
 
-    Gtk::TreeView *tree_prov,*tree_venta;
+    Gtk::TreeView *tree_prov,*tree_venta,*tree_repor;
     Gtk::Label *lbl_cont_prod, *lbl_con_prov;
     Gtk::Button *btn_add_prov, *btn_remove_prov, *btn_edit_prov, *btn_add_produ, *btn_remove_produ;
     Gtk::Entry *ety_barras;
@@ -121,6 +122,34 @@ private:
     ModelPrroductos m_Columns_prod;
 
     Glib::RefPtr<Gtk::ListStore> m_refTreeModel_prod;
+
+    class ModelVenta : public Gtk::TreeModel::ColumnRecord
+    {
+    public:
+        ModelVenta()
+        {
+            add(id);
+            add(tipo);
+            add(total);
+            add(ingreso);
+            add(cambio);
+            add(folio);
+            add(fecha);
+            add(datos);
+        }
+
+        Gtk::TreeModelColumn<size_t> id;
+        Gtk::TreeModelColumn<Glib::ustring> tipo;
+        Gtk::TreeModelColumn<float> total;
+        Gtk::TreeModelColumn<float> ingreso;
+        Gtk::TreeModelColumn<float> cambio;
+        Gtk::TreeModelColumn<Glib::ustring> folio;
+        Gtk::TreeModelColumn<Glib::ustring> fecha;
+        Gtk::TreeModelColumn<Glib::ustring> datos;
+    };
+    ModelVenta m_Columns_reporte;
+
+    Glib::RefPtr<Gtk::ListStore> m_refTreeModel_reporte;
 
     Gtk::CellRendererText *cell_sku = Gtk::manage(new Gtk::CellRendererText());
     Gtk::CellRendererText *cell_nombre = Gtk::manage(new Gtk::CellRendererText());
@@ -216,6 +245,7 @@ private:
 
     void carga_señales();
     void init_venta();
+    void init_reporte();
     void add_articulo_venta();
     bool add_match_arcticulo(const Gtk::TreeModel::iterator& iter);
     void on_spin_ingreso_changed();

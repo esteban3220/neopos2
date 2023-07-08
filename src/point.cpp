@@ -51,7 +51,21 @@ void Pos::on_btn_pago_efectivo_clicked()
         if (pag_efectivo && pag_tarjeta)
             tipo = "Mixto";
 
+        auto rowid = m_refTreeModel_reporte->get_iter("0");
+        auto id = (*rowid)[m_Columns_reporte.id] + 1;
+
         db->command("INSERT INTO venta VALUES (null,'" + tipo + "', " + std::to_string(total_vcarrito) + ", " + spin_ingreso->get_text() + " , " + lbl_cambio->get_text().substr(1, lbl_cambio->get_text().size()) + ",'" + folio_tarjetaa.str() + "' , datetime('now','localtime') , '" + ss.str() + "');");
+
+        row_reporte = *(m_refTreeModel_reporte->prepend());
+        row_reporte[m_Columns_reporte.id] = id;
+        row_reporte[m_Columns_reporte.tipo] = tipo;
+        row_reporte[m_Columns_reporte.total] = total_vcarrito;
+        row_reporte[m_Columns_reporte.ingreso] = (float)spin_ingreso->get_value();
+        row_reporte[m_Columns_reporte.cambio] = (float)spin_ingreso->get_value()- total_vcarrito;
+        row_reporte[m_Columns_reporte.folio] = folio_tarjetaa.str();
+        row_reporte[m_Columns_reporte.fecha] = Glib::DateTime::create_now_local().format("%Y-%m-%d %H:%M:%S");
+        row_reporte[m_Columns_reporte.datos] = ss.str();
+
         folio_tarjetaa.str("");
         folio_tarjetaa.clear();
         pag_efectivo = false;
@@ -131,8 +145,14 @@ bool Pos::on_spin_ingreso_activate(guint keyval, guint, Gdk::ModifierType state)
 {
     if (keyval == GDK_KEY_F11)
     {
-        on_btn_pago_efectivo_clicked();
+        cierra_venta();
         std::cout << "F11" << std::endl;
+        return true;
+    }
+    if (keyval == GDK_KEY_F12)
+    {
+        on_btn_pago_tarjeta_clicked();
+        std::cout << "F12" << std::endl;
         return true;
     }
     return false;
