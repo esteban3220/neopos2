@@ -1,1 +1,0 @@
-/usr/sbin/g++ -g CMakeFiles/NeoPos.dir/src/main.cpp.o -o NeoPos  -lstdc++fs -lrt -lpthread 

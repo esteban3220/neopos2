@@ -6,6 +6,7 @@
 #include <map>
 #include <vector>
 #include "sqlite.cpp"
+#include <sstream>
 
 class Pos : public Gtk::Window
 {
@@ -23,6 +24,7 @@ private:
 
     Gtk::TreeModel::Row row_producto;
     Gtk::TreeModel::Row row_subcategoria;
+    Gtk::TreeModel::Row row_reporte;
 
     class ModelColumns : public Gtk::TreeModel::ColumnRecord
     {
@@ -79,7 +81,7 @@ private:
     void on_cell_data_func_u(Gtk::CellRenderer *renderer, const Gtk::TreeModel::const_iterator &iter);
     void on_cell_data_func_c(Gtk::CellRenderer *renderer, const Gtk::TreeModel::const_iterator &iter);
 
-    Gtk::TreeView *tree_prov,*tree_venta;
+    Gtk::TreeView *tree_prov,*tree_venta,*tree_repor;
     Gtk::Label *lbl_cont_prod, *lbl_con_prov;
     Gtk::Button *btn_add_prov, *btn_remove_prov, *btn_edit_prov, *btn_add_produ, *btn_remove_produ;
     Gtk::Entry *ety_barras;
@@ -120,6 +122,34 @@ private:
     ModelPrroductos m_Columns_prod;
 
     Glib::RefPtr<Gtk::ListStore> m_refTreeModel_prod;
+
+    class ModelVenta : public Gtk::TreeModel::ColumnRecord
+    {
+    public:
+        ModelVenta()
+        {
+            add(id);
+            add(tipo);
+            add(total);
+            add(ingreso);
+            add(cambio);
+            add(folio);
+            add(fecha);
+            add(datos);
+        }
+
+        Gtk::TreeModelColumn<size_t> id;
+        Gtk::TreeModelColumn<Glib::ustring> tipo;
+        Gtk::TreeModelColumn<float> total;
+        Gtk::TreeModelColumn<float> ingreso;
+        Gtk::TreeModelColumn<float> cambio;
+        Gtk::TreeModelColumn<Glib::ustring> folio;
+        Gtk::TreeModelColumn<Glib::ustring> fecha;
+        Gtk::TreeModelColumn<Glib::ustring> datos;
+    };
+    ModelVenta m_Columns_reporte;
+
+    Glib::RefPtr<Gtk::ListStore> m_refTreeModel_reporte;
 
     Gtk::CellRendererText *cell_sku = Gtk::manage(new Gtk::CellRendererText());
     Gtk::CellRendererText *cell_nombre = Gtk::manage(new Gtk::CellRendererText());
@@ -215,6 +245,7 @@ private:
 
     void carga_señales();
     void init_venta();
+    void init_reporte();
     void add_articulo_venta();
     bool add_match_arcticulo(const Gtk::TreeModel::iterator& iter);
     void on_spin_ingreso_changed();
@@ -227,8 +258,14 @@ private:
     void on_btn_add_clicked();
     void on_btn_remove_clicked();
     void on_btn_remove_prod_clicked();
+    void cierra_venta();
+    void init_popover_articulo();
+    void add_articulo_venta_popover();
+    void add_btn_articulo_venta_popover();
     bool on_spin_ingreso_activate(guint keyval, guint, Gdk::ModifierType state);
-    float total_vcarrito = 0;
+    float total_vcarrito = 0.0f;
+    bool pag_efectivo = false, pag_tarjeta = false;
+    std::stringstream folio_tarjetaa;
 
     Glib::RefPtr<Gtk::EntryCompletion> completion_pos = Gtk::EntryCompletion::create();
 
@@ -240,11 +277,12 @@ protected:
     Gtk::StackSwitcher stack_switcher;
     Gtk::Stack *stack_main_pos;
     Gtk::MenuButton menu_button;
-    Gtk::Label *lbl_cambio;
-    Gtk::Popover popover_cal;
+    Gtk::Label *lbl_cambio,lbl_articulo_popover;
+    Gtk::Popover popover_ingreso_articulos;
     Gtk::SpinButton *spin_ingreso;
-    Gtk::Button *btn_pago_efectivo,*btn_pago_tarjeta;
-    Gtk::Entry ety_folio;
+    Gtk::Button *btn_pago_efectivo,*btn_pago_tarjeta,btn_add_articulo_popover,*btn_add_piezas;
+    Gtk::Entry ety_folio,ety_articulo_popover;
+    Gtk::SpinButton spin_cantidad_articulo_popover;
 
 
 public:

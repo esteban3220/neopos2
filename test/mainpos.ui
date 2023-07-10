@@ -143,6 +143,7 @@
                             <property name="spacing">5</property>
                             <child>
                               <object class="GtkButton" id="btn_pago_efectivo">
+                                <property name="accessible-role">button</property>
                                 <property name="css-classes">suggested-action</property>
                                 <property name="icon-name">system-switch-user-symbolic</property>
                                 <property name="label">Efectivo</property>
@@ -341,7 +342,9 @@
                             <property name="vexpand">true</property>
                             <property name="vexpand-set">true</property>
                             <child>
-                              <object class="GtkTreeView" id="tree_repor"/>
+                              <object class="GtkTreeView" id="tree_repor">
+                                <property name="enable-grid-lines">horizontal</property>
+                              </object>
                             </child>
                           </object>
                         </child>
