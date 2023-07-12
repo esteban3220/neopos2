@@ -7,6 +7,10 @@
 #include <cmath>
 #include <fstream>
 
+#ifdef __win32__
+#include <windows.h>
+#endif
+
 void Pos::init_venta()
 {
     ModelCarroVenta = Gtk::ListStore::create(m_Columns_venta);
@@ -85,6 +89,33 @@ void Pos::on_btn_pago_efectivo_clicked()
 
         std::system("lp temp.txt");
         remove("temp.txt");
+
+        #ifdef __win32__
+        HDC printerDC = GetDC(NULL);
+
+        // Crear un objeto DOCINFO para describir la tarea de impresión
+        DOCINFO di;
+        ZeroMemory(&di, sizeof(DOCINFO));
+        di.cbSize = sizeof(DOCINFO);
+        di.lpszDocName = "MiDocumento";
+
+        // Iniciar la tarea de impresión
+        if (StartDoc(printerDC, &di) > 0) {
+            if (StartPage(printerDC) > 0) {
+                // Imprimir el texto
+                TextOut(printerDC, 100, 100, ticket.str().c_str(), ticket.str().length());
+
+                // Finalizar la página de impresión
+                EndPage(printerDC);
+            }
+
+            // Finalizar la tarea de impresión
+            EndDoc(printerDC);
+        }
+
+        // Liberar el identificador de la impresora
+        ReleaseDC(NULL, printerDC);
+        #endif
 
         db->command("INSERT INTO venta VALUES (" + std::to_string(id) + ",'" + tipo + "', " + std::to_string(total_vcarrito) + ", " + spin_ingreso->get_text() + " , " + lbl_cambio->get_text().substr(1, lbl_cambio->get_text().size()) + ",'" + folio_tarjetaa.str() + "' , datetime('now','localtime') , '" + ss.str() + "');");
 
