@@ -104,6 +104,7 @@
                               </object>
                             </property>
                             <property name="label">Total</property>
+                            <property name="label-xalign">0.5</property>
                             <property name="vexpand">true</property>
                             <property name="vexpand-set">true</property>
                           </object>
@@ -117,10 +118,11 @@
                                 <property name="margin-bottom">10</property>
                                 <property name="margin-end">10</property>
                                 <property name="margin-start">10</property>
-                                <property name="numeric">True</property>
+                                <property name="numeric">true</property>
                               </object>
                             </property>
                             <property name="label">Ingreso</property>
+                            <property name="label-xalign">0.5</property>
                           </object>
                         </child>
                         <child>
@@ -135,6 +137,7 @@
                               </object>
                             </property>
                             <property name="label">Cambio</property>
+                            <property name="label-xalign">0.5</property>
                           </object>
                         </child>
                         <child>
@@ -143,7 +146,7 @@
                             <property name="spacing">5</property>
                             <child>
                               <object class="GtkButton" id="btn_pago_efectivo">
-                                <property name="accessible-role">button</property>
+                                <property name="accessible-role">3</property>
                                 <property name="css-classes">suggested-action</property>
                                 <property name="icon-name">system-switch-user-symbolic</property>
                                 <property name="label">Efectivo</property>
@@ -315,11 +318,6 @@
                             <property name="margin-start">5</property>
                             <property name="spacing">5</property>
                             <child>
-                              <object class="GtkSearchEntry">
-                                <property name="placeholder-text">Buscar por numero de Compra.</property>
-                              </object>
-                            </child>
-                            <child>
                               <object class="GtkSpinButton"/>
                             </child>
                             <child>
@@ -334,16 +332,38 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkFrame">
+                      <object class="GtkBox">
+                        <property name="spacing">5</property>
                         <child>
-                          <object class="GtkScrolledWindow">
-                            <property name="hexpand">true</property>
-                            <property name="hexpand-set">true</property>
-                            <property name="vexpand">true</property>
-                            <property name="vexpand-set">true</property>
+                          <object class="GtkFrame">
                             <child>
-                              <object class="GtkTreeView" id="tree_repor">
-                                <property name="enable-grid-lines">horizontal</property>
+                              <object class="GtkScrolledWindow">
+                                <property name="hexpand">true</property>
+                                <property name="hexpand-set">true</property>
+                                <property name="vexpand">true</property>
+                                <property name="vexpand-set">true</property>
+                                <child>
+                                  <object class="GtkTreeView" id="tree_repor">
+                                    <property name="activate-on-single-click">True</property>
+                                    <property name="enable-grid-lines">horizontal</property>
+                                    <property name="reorderable">True</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkFrame">
+                            <property name="label">Detalles</property>
+                            <property name="width-request">450</property>
+                            <child>
+                              <object class="GtkScrolledWindow">
+                                <child>
+                                  <object class="GtkTreeView" id="tree_detalle_venta">
+                                    <property name="enable-grid-lines">vertical</property>
+                                  </object>
+                                </child>
                               </object>
                             </child>
                           </object>

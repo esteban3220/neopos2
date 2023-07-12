@@ -5,6 +5,7 @@
 #include <vector>
 #include <iomanip>
 #include <cmath>
+#include <fstream>
 
 void Pos::init_venta()
 {
@@ -28,10 +29,17 @@ void Pos::on_btn_pago_efectivo_clicked()
     if (total_vcarrito != 0)
     {
         std::stringstream ss;
+        std::stringstream ticket;
         std::string tipo;
+
+        ticket << "***************** TICKET DE COMPRA ****************" << std::endl;
+        ticket << "---------------------------------------------------" << std::endl;
+
         for (auto row : ModelCarroVenta->children())
         {
-            ss << row[m_Columns_venta.sku] << "|" << row[m_Columns_venta.cantidad] << "|" << row[m_Columns_venta.nombre] << "|" << row[m_Columns_venta.precio_u] << "|" << row[m_Columns_venta.precio_t] << "&";
+            ss << std::to_string(row[m_Columns_venta.sku]) << "|" << row[m_Columns_venta.cantidad] << "|" << row[m_Columns_venta.nombre] << "|" << row[m_Columns_venta.precio_u] << "|" << row[m_Columns_venta.precio_t] << "|";
+            ticket << std::left << std::setw(20) << row[m_Columns_venta.nombre] << std::right << std::setw(10) << row[m_Columns_venta.cantidad] << std::setw(10) << row[m_Columns_venta.precio_u] << std::setw(10) << row[m_Columns_venta.precio_t] << std::endl;
+
             for (auto row_prod : m_refTreeModel_prod->children())
             {
                 if (row[m_Columns_venta.sku] == row_prod[m_Columns_prod.sku])
@@ -44,24 +52,48 @@ void Pos::on_btn_pago_efectivo_clicked()
                 }
             }
         }
+
         if (pag_tarjeta)
             tipo = "Tarjeta";
         if (pag_efectivo)
             tipo = "Efectivo";
         if (pag_efectivo && pag_tarjeta)
             tipo = "Mixto";
-
         auto rowid = m_refTreeModel_reporte->get_iter("0");
         auto id = (*rowid)[m_Columns_reporte.id] + 1;
 
-        db->command("INSERT INTO venta VALUES (null,'" + tipo + "', " + std::to_string(total_vcarrito) + ", " + spin_ingreso->get_text() + " , " + lbl_cambio->get_text().substr(1, lbl_cambio->get_text().size()) + ",'" + folio_tarjetaa.str() + "' , datetime('now','localtime') , '" + ss.str() + "');");
+        ticket << "---------------------------------------------------" << std::endl;
+        ticket << std::left << std::setw(20) << "Total:" << std::right << std::setw(30) << std::fixed << std::setprecision(2) << total_vcarrito << std::endl;
+        ticket << std::left << std::setw(20) << "Tipo de Pago:" << std::right << std::setw(30) << tipo << std::endl;
+        ticket << "---------------------------------------------------" << std::endl;
+        ticket << std::left << std::setw(20) << "Ingreso:" << std::right << std::setw(30) << std::fixed << std::setprecision(2) << spin_ingreso->get_value() << std::endl;
+        ticket << std::left << std::setw(20) << "Cambio:" << std::right << std::setw(30) << std::fixed << std::setprecision(2) << spin_ingreso->get_value() - total_vcarrito << std::endl;
+        ticket << "---------------------------------------------------" << std::endl;
+        ticket << std::left << std::setw(20) << "Folio Tarjeta:" << std::right << std::setw(30) << folio_tarjetaa.str() << std::endl;
+        ticket << "---------------------------------------------------" << std::endl;
+        ticket << std::left << std::setw(20) << "Fecha:" << std::right << std::setw(30) << Glib::DateTime::create_now_local().format("%Y-%m-%d %H:%M:%S") << std::endl;
+        //ticket << std::left << std::setw(20) << "Vendedor:" << std::right << std::setw(30) << ss.str() << std::endl;
+        ticket << std::left << std::setw(20) << "No. Ticket:" << std::right << std::setw(30) << id << std::endl;
+        ticket << "---------------------------------------------------" << std::endl;
+        ticket << "************** Gracias por su compra **************" << std::endl;
+        
+        std::cout << ticket.str() << std::endl;
+
+        std::ofstream archivoTemp("temp.txt");
+        archivoTemp << ticket.str();
+        archivoTemp.close();
+
+        std::system("lp temp.txt");
+        remove("temp.txt");
+
+        db->command("INSERT INTO venta VALUES (" + std::to_string(id) + ",'" + tipo + "', " + std::to_string(total_vcarrito) + ", " + spin_ingreso->get_text() + " , " + lbl_cambio->get_text().substr(1, lbl_cambio->get_text().size()) + ",'" + folio_tarjetaa.str() + "' , datetime('now','localtime') , '" + ss.str() + "');");
 
         row_reporte = *(m_refTreeModel_reporte->prepend());
         row_reporte[m_Columns_reporte.id] = id;
         row_reporte[m_Columns_reporte.tipo] = tipo;
         row_reporte[m_Columns_reporte.total] = total_vcarrito;
         row_reporte[m_Columns_reporte.ingreso] = (float)spin_ingreso->get_value();
-        row_reporte[m_Columns_reporte.cambio] = (float)spin_ingreso->get_value()- total_vcarrito;
+        row_reporte[m_Columns_reporte.cambio] = (float)spin_ingreso->get_value() - total_vcarrito;
         row_reporte[m_Columns_reporte.folio] = folio_tarjetaa.str();
         row_reporte[m_Columns_reporte.fecha] = Glib::DateTime::create_now_local().format("%Y-%m-%d %H:%M:%S");
         row_reporte[m_Columns_reporte.datos] = ss.str();
@@ -105,7 +137,7 @@ void Pos::add_articulo_venta()
                     }
                 }
                 row_venta = *(ModelCarroVenta->append());
-                row_venta[m_Columns_venta.sku] = row[m_Columns_prod.sku].operator std::size_t();
+                row_venta[m_Columns_venta.sku] = row[m_Columns_prod.sku].operator long long();
                 row_venta[m_Columns_venta.cantidad] = 1;
                 row_venta[m_Columns_venta.nombre] = row[m_Columns_prod.nombre].operator Glib::ustring();
                 row_venta[m_Columns_venta.precio_u] = row[m_Columns_prod.precio_u].operator float();

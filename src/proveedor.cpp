@@ -29,9 +29,11 @@ Pos::Pos()
     completion_pos->set_text_column(m_Columns_prod.nombre);
     spin_ingreso->set_adjustment(Gtk::Adjustment::create(0.0, 0.0, 100000.0, 1.0, 10.0, 0.0));
     spin_cantidad_articulo_popover.set_adjustment(Gtk::Adjustment::create(0.0, 0.0, 100000.0, 1.0, 10.0, 0.0));
+    refGesture->set_button(GDK_BUTTON_SECONDARY);
     init_venta();
     init_popover_articulo();
     init_reporte();
+    init_detalle_venta();
 }
 
 void Pos::cargar_glade()
@@ -56,6 +58,7 @@ void Pos::cargar_glade()
     btn_pago_tarjeta = builder->m_refBuilder->get_widget<Gtk::Button>("btn_pago_tarjeta");
     btn_add_piezas = builder->m_refBuilder->get_widget<Gtk::Button>("btn_add_piezas");
     tree_repor = builder->m_refBuilder->get_widget<Gtk::TreeView>("tree_repor");
+    tree_detalle_venta = builder->m_refBuilder->get_widget<Gtk::TreeView>("tree_detalle_venta");
 
     lbl_precio_total->set_markup("$<span font_desc='50'>0.00</span>");
     stack_switcher.set_stack(*stack_main_pos);
@@ -79,15 +82,31 @@ void Pos::carga_señales()
     ety_barras->signal_activate().connect(sigc::mem_fun(*this, &Pos::add_articulo_venta));
     completion_pos->signal_match_selected().connect(sigc::mem_fun(*this, &Pos::add_match_arcticulo), false);
     spin_ingreso->signal_value_changed().connect(sigc::mem_fun(*this, &Pos::on_spin_ingreso_changed));
-    controller->signal_key_pressed().connect(sigc::mem_fun(*this, &Pos::on_spin_ingreso_activate),false);
+    controller->signal_key_pressed().connect(sigc::mem_fun(*this, &Pos::on_spin_ingreso_activate), false);
     btn_pago_efectivo->signal_clicked().connect(sigc::mem_fun(*this, &Pos::cierra_venta));
     btn_pago_tarjeta->signal_clicked().connect(sigc::mem_fun(*this, &Pos::on_btn_pago_tarjeta_clicked));
     btn_remove_produ->signal_clicked().connect(sigc::mem_fun(*this, &Pos::on_btn_remove_prod_clicked));
-    btn_add_piezas->signal_clicked().connect([this](){popover_ingreso_articulos.popup();});
+    btn_add_piezas->signal_clicked().connect([this]()
+                                             { popover_ingreso_articulos.popup(); });
     ety_articulo_popover.signal_activate().connect(sigc::mem_fun(*this, &Pos::add_articulo_venta_popover));
     btn_add_articulo_popover.signal_clicked().connect(sigc::mem_fun(*this, &Pos::add_btn_articulo_venta_popover));
+    tree_repor->signal_row_activated().connect(sigc::mem_fun(*this, &Pos::on_tree_detalle_venta_row_activated));
+    refGesture->signal_pressed().connect(sigc::mem_fun(*this, &Pos::on_popup_button_pressed));
 
     add_controller(controller);
+    add_controller(refGesture);
+
+    auto gmenu = Gio::Menu::create();
+    gmenu->append("_Cancela Venta.", "popup.remove");
+    auto refActionGroup = Gio::SimpleActionGroup::create();
+
+    refActionGroup->add_action("remove",
+    sigc::mem_fun(*this, &Pos::on_menu_file_popup_generic));
+    insert_action_group("popup", refActionGroup);
+
+    m_MenuPopup.set_parent(*tree_repor);
+    m_MenuPopup.set_menu_model(gmenu);
+    m_MenuPopup.set_has_arrow(false);
 
     btn_add_produ->signal_clicked().connect([this]()
                                             {row_producto = *(m_refTreeModel_prod->append()); lbl_cont_prod->set_text("Productos: " + std::to_string(++cont_prod)); });
@@ -111,7 +130,6 @@ void Pos::carga_señales()
                                                 dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_produ_dialog_edit_response),  path_string, new_text, COLUMNS::ColumnProducto::CADUCIDAD));
                                                 dialog->set_default_response(Gtk::ResponseType::OK);
                                                 dialog->show(); });
-
 
     cell_marca->signal_changed().connect([this](const Glib::ustring &path_string, const Gtk::TreeModel::iterator &val)
                                          {dialog.reset(new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true));
@@ -142,14 +160,14 @@ void Pos::carga_señales()
                                                 dialog->show(); });
 
     cell_categoria->signal_changed().connect([this](const Glib::ustring &path_string, const Gtk::TreeModel::iterator &val)
-                                            {dialog.reset(new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true));
+                                             {dialog.reset(new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true));
                                                 dialog->set_secondary_text("¿Desea editar el campo?");
                                                 dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_cell_categoria_changed),  path_string, val));
                                                 dialog->set_default_response(Gtk::ResponseType::OK);
                                                 dialog->show(); });
 
     cell_subcategoria->signal_changed().connect([this](const Glib::ustring &path_string, const Gtk::TreeModel::iterator &val)
-                                               {dialog.reset(new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true));
+                                                {dialog.reset(new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true));
                                                     dialog->set_secondary_text("¿Desea editar el campo?");
                                                     dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_cell_subcategoria_changed),  path_string, val));
                                                     dialog->set_default_response(Gtk::ResponseType::OK);
@@ -223,7 +241,7 @@ void Pos::on_cell1_edited(const Glib::ustring &path_string, const Glib::ustring 
 {
     dialog.reset(new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true));
     dialog->set_secondary_text("¿Desea editar el campo?");
-    dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_prov_dialog_edit_response),  path_string, new_text, COLUMNS::ColumnProveedor::NOMBRE));
+    dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_prov_dialog_edit_response), path_string, new_text, COLUMNS::ColumnProveedor::NOMBRE));
     dialog->set_default_response(Gtk::ResponseType::OK);
     dialog->show();
 }
@@ -250,7 +268,7 @@ void Pos::on_cell4_edited(const Glib::ustring &path_string, const Glib::ustring 
 {
     dialog.reset(new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true));
     dialog->set_secondary_text("¿Desea editar el campo?");
-    dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_prov_dialog_edit_response),path_string, new_text, COLUMNS::ColumnProveedor::EMAIL));
+    dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_prov_dialog_edit_response), path_string, new_text, COLUMNS::ColumnProveedor::EMAIL));
     dialog->set_default_response(Gtk::ResponseType::OK);
     dialog->show();
 }
@@ -388,9 +406,8 @@ void Pos::on_prov_dialog_edit_response(int response_id, const Glib::ustring &pat
                 dialog.reset(new Gtk::MessageDialog(*this, "Error al editar un Registro", false, Gtk::MessageType::ERROR, Gtk::ButtonsType::OK, true));
                 dialog->set_secondary_text(e.what());
                 dialog->set_hide_on_close(true);
-                dialog->signal_response().connect([&](int response_id) {
-                    dialog->close();
-                });
+                dialog->signal_response().connect([&](int response_id)
+                                                  { dialog->close(); });
                 dialog->show();
             }
         }
