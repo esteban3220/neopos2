@@ -16,6 +16,7 @@ private:
     void cargar_glade();
     void init();
     void init_producto();
+    void init_config_ticket();
     void llena_subca();
 
     std::map<std::string, std::vector<std::string>> subcategoria_map;
@@ -296,8 +297,10 @@ private:
     void on_menu_file_popup_generic();
 
     Glib::RefPtr<Gtk::EntryCompletion> completion_pos = Gtk::EntryCompletion::create();
+    Glib::RefPtr<Gio::SimpleAction> impresion_act;
 
 protected:
+    Gtk::Window *window_conf_ticket;
     Gtk::Box *box_pos;
     Gtk::TreeView *tree_prod;
     Gtk::Label *lbl_precio_total;
@@ -307,15 +310,16 @@ protected:
     Gtk::MenuButton menu_button;
     Gtk::Label *lbl_cambio, lbl_articulo_popover;
     Gtk::Popover popover_ingreso_articulos;
+    Gtk::PopoverMenu m_MenuPopup;
     Gtk::SpinButton *spin_ingreso;
     Gtk::Button *btn_pago_efectivo, *btn_pago_tarjeta, btn_add_articulo_popover, *btn_add_piezas;
     Gtk::Entry ety_folio, ety_articulo_popover;
     Gtk::SpinButton spin_cantidad_articulo_popover;
-    Gtk::PopoverMenu m_MenuPopup;
+    Gtk::PopoverMenu m_MenuPopup_main;
 
 public:
-    Pos(/* args */);
-    ~Pos() {}
+    Pos(const Glib::RefPtr<Gtk::Application>& app);
+    ~Pos() {m_MenuPopup.unparent(); m_MenuPopup_main.unparent(); popover_ingreso_articulos.unparent();}
 };
 
 #endif // POS_HPP

@@ -5,9 +5,10 @@
 #include "point.cpp"
 #include "columns.hpp"
 #include "venta.cpp"
+#include "config.cpp"
 #include <string>
 
-Pos::Pos()
+Pos::Pos(const Glib::RefPtr<Gtk::Application>& app)
 {
     cargar_glade();
     if (!db->open())
@@ -34,6 +35,27 @@ Pos::Pos()
     init_popover_articulo();
     init_reporte();
     init_detalle_venta();
+    init_config_ticket();
+
+    auto refActionGroup = Gio::SimpleActionGroup::create();
+    auto gmenu = Gio::Menu::create();
+    auto submenu = Gio::Menu::create();
+
+    gmenu->append_submenu("Configuracion",submenu);
+    submenu->append("_Imprimir","popupmain.config.imprimir");
+    submenu->append("_Conf. Ticket","popupmain.config.ticket");
+    
+    gmenu->append("_Salir", "app.quit");
+
+    impresion_act = refActionGroup->add_action_bool("config.imprimir",[=](){bool activo = false;  impresion_act->get_state(activo); activo ? impresion_act->change_state(false) : impresion_act->change_state(true);});
+    refActionGroup->add_action("config.ticket",[=](){window_conf_ticket->show();});
+    insert_action_group("popupmain", refActionGroup);
+    m_MenuPopup_main.set_menu_model(gmenu);
+
+    app->set_accel_for_action("app.quit", "<Ctrl>Q");
+    app->set_accel_for_action("popupmain.config.imprimir", "<Ctrl>I");
+    
+    menu_button.set_popover(m_MenuPopup_main);
 }
 
 void Pos::cargar_glade()
@@ -100,8 +122,7 @@ void Pos::carga_señales()
     gmenu->append("_Cancela Venta.", "popup.remove");
     auto refActionGroup = Gio::SimpleActionGroup::create();
 
-    refActionGroup->add_action("remove",
-    sigc::mem_fun(*this, &Pos::on_menu_file_popup_generic));
+    refActionGroup->add_action("remove",sigc::mem_fun(*this, &Pos::on_menu_file_popup_generic));
     insert_action_group("popup", refActionGroup);
 
     m_MenuPopup.set_parent(*tree_repor);

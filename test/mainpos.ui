@@ -42,12 +42,6 @@
                     </child>
                     <child>
                       <object class="GtkButton">
-                        <property name="icon-name">folder-saved-search-symbolic</property>
-                        <property name="tooltip-text">Busca existencia de producto y/o Precio.</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkButton">
                         <property name="icon-name">document-page-setup-symbolic</property>
                         <property name="tooltip-text">Venta en masa o menta por Granel.</property>
                       </object>
