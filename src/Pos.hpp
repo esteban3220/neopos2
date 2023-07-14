@@ -7,6 +7,7 @@
 #include <vector>
 #include "sqlite.cpp"
 #include <sstream>
+#include <map>
 
 class Pos : public Gtk::Window
 {
@@ -278,6 +279,7 @@ private:
     void cierra_dialogo(int response_id);
 
     Gtk::TreeModel::Row row_venta, row_detalle_venta;
+    std::stringstream ticket_config;
 
     void on_btn_add_clicked();
     void on_btn_remove_clicked();
@@ -295,9 +297,13 @@ private:
 
     void on_popup_button_pressed(int n_press, double x, double y);
     void on_menu_file_popup_generic();
+    void edit_ticket();
 
     Glib::RefPtr<Gtk::EntryCompletion> completion_pos = Gtk::EntryCompletion::create();
     Glib::RefPtr<Gio::SimpleAction> impresion_act;
+    Glib::RefPtr<Gtk::TextBuffer> m_refTextBuffer1 = Gtk::TextBuffer::create();
+
+    std::string razon_social,direccion,rfc,contacto,regreats;
 
 protected:
     Gtk::Window *window_conf_ticket;
@@ -316,6 +322,14 @@ protected:
     Gtk::Entry ety_folio, ety_articulo_popover;
     Gtk::SpinButton spin_cantidad_articulo_popover;
     Gtk::PopoverMenu m_MenuPopup_main;
+    Gtk::TextView *text_ticket;
+    Gtk::ListBox *list_config_visualizacion,*list_config_datos,*list_config_test;
+    Gtk::Overlay *overlay_main;
+    Gtk::Entry *ety_conf_razon,*ety_conf_direccion,*ety_conf_rfc,*ety_conf_contacto,*ety_conf_thanks;
+
+    Gtk::CheckButton *check_config_1,*check_config_2,*check_config_3,*check_config_4,*check_config_5,*check_config_6;
+
+    std::map<short,Gtk::CheckButton*> vec_check{{0,check_config_1},{1,check_config_2},{2,check_config_3},{3,check_config_4},{4,check_config_5},{5,check_config_6}};
 
 public:
     Pos(const Glib::RefPtr<Gtk::Application>& app);

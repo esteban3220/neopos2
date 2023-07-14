@@ -61,6 +61,7 @@ Pos::Pos(const Glib::RefPtr<Gtk::Application>& app)
 void Pos::cargar_glade()
 {
     box_pos = builder->m_refBuilder->get_widget<Gtk::Box>("box_pos");
+    overlay_main = builder->m_refBuilder->get_widget<Gtk::Overlay>("overlay_main");
     stack_main_pos = builder->m_refBuilder->get_widget<Gtk::Stack>("stack_main_pos");
     auto stack_debug = builder->m_refBuilder->get_widget<Gtk::StackSwitcher>("stack_debug");
     tree_prov = builder->m_refBuilder->get_widget<Gtk::TreeView>("tree_prov");
@@ -88,7 +89,7 @@ void Pos::cargar_glade()
     stack_main_pos->set_transition_type(Gtk::StackTransitionType::SLIDE_LEFT_RIGHT);
 
     stack_debug->hide();
-    set_child(*box_pos);
+    set_child(*overlay_main);
 }
 
 void Pos::carga_señales()

@@ -76,7 +76,6 @@ void Pos::on_btn_pago_efectivo_clicked()
         ticket << std::left << std::setw(20) << "Folio Tarjeta:" << std::right << std::setw(30) << folio_tarjetaa.str() << std::endl;
         ticket << "---------------------------------------------------" << std::endl;
         ticket << std::left << std::setw(20) << "Fecha:" << std::right << std::setw(30) << Glib::DateTime::create_now_local().format("%Y-%m-%d %H:%M:%S") << std::endl;
-        //ticket << std::left << std::setw(20) << "Vendedor:" << std::right << std::setw(30) << ss.str() << std::endl;
         ticket << std::left << std::setw(20) << "No. Ticket:" << std::right << std::setw(30) << id << std::endl;
         ticket << "---------------------------------------------------" << std::endl;
         ticket << "************** Gracias por su compra **************" << std::endl;
