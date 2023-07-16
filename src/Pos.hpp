@@ -273,6 +273,7 @@ private:
     void init_detalle_venta();
     void add_articulo_venta();
     bool add_match_arcticulo(const Gtk::TreeModel::iterator &iter);
+    bool on_window_conf_ticket_delete_event();
     void on_spin_ingreso_changed();
     void on_btn_pago_efectivo_clicked();
     void on_btn_pago_tarjeta_clicked();
@@ -285,6 +286,7 @@ private:
     void on_btn_remove_clicked();
     void on_btn_remove_prod_clicked();
     void cierra_venta();
+    void initconf();
     void init_popover_articulo();
     void add_articulo_venta_popover();
     void add_btn_articulo_venta_popover();

@@ -29,6 +29,7 @@ void Pos::init_reporte()
         row_reporte[m_Columns_reporte.fecha] = db->get_result()[i][6];
         row_reporte[m_Columns_reporte.datos] = db->get_result()[i][7];
     }
+    result.clear();
 }
 
 void Pos::init_detalle_venta()
