@@ -500,6 +500,13 @@ Pos::init_config_ticket ()
         archivoTemp.close ();
 
         std::system ("lp tempo.txt");
+        #ifdef __linux__
+          std::system("lp tempo.txt");
+        #endif
+
+        #ifdef _WIN32
+            std::system("print tempo.txt");
+        #endif
         remove ("tempo.txt");
       });
   list_config_visualizacion->signal_row_activated ().connect (
