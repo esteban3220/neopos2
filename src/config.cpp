@@ -498,15 +498,15 @@ Pos::init_config_ticket ()
         std::ofstream archivoTemp ("tempo.txt");
         archivoTemp << ticket_config.str ();
         archivoTemp.close ();
-
+#ifdef __APPLE__
+        std::system ("lpr tempo.txt");
+#endif
+#ifdef __linux__
         std::system ("lp tempo.txt");
-        #ifdef __linux__
-          std::system("lp tempo.txt");
-        #endif
-
-        #ifdef _WIN32
-            std::system("print tempo.txt");
-        #endif
+#endif
+#ifdef _WIN32
+        std::system ("print tempo.txt");
+#endif
         remove ("tempo.txt");
       });
   list_config_visualizacion->signal_row_activated ().connect (
@@ -522,10 +522,14 @@ Pos::init_config_ticket ()
 bool
 Pos::on_window_conf_ticket_delete_event ()
 {
-  dialog.reset (new Gtk::MessageDialog (*window_conf_ticket, "Config. Tickets", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::NONE, true));
+  dialog.reset (new Gtk::MessageDialog (*window_conf_ticket, "Config. Tickets",
+                                        false, Gtk::MessageType::QUESTION,
+                                        Gtk::ButtonsType::NONE, true));
   dialog->set_secondary_text ("Desea guardar los cambios?");
   dialog->add_button ("Cancelar", Gtk::ResponseType::CANCEL);
-  dialog->add_button ("No", Gtk::ResponseType::NO)->get_style_context()->add_class("destructive-action");
+  dialog->add_button ("No", Gtk::ResponseType::NO)
+      ->get_style_context ()
+      ->add_class ("destructive-action");
   dialog->add_button ("Si", Gtk::ResponseType::YES);
 
   bool ret = false;
@@ -533,34 +537,55 @@ Pos::on_window_conf_ticket_delete_event ()
   dialog->signal_response ().connect ([=] (int response) {
     if (response == Gtk::ResponseType::CANCEL)
       dialog->hide ();
-	if (response == Gtk::ResponseType::NO){
-		dialog->hide ();
-		initconf ();
-		window_conf_ticket->hide ();
-	}
-	if (response == Gtk::ResponseType::YES)
-	  {
-		dialog->hide ();
-		window_conf_ticket->hide ();
-		db->command ("UPDATE conf SET "
-					 "v1 = '" + std::to_string (vec_check[0]->get_active ()) + "', "
-					 "v2 = '" + std::to_string (vec_check[1]->get_active ()) + "', "
-					 "v3 = '" + std::to_string (vec_check[2]->get_active ()) + "', "
-					 "v4 = '" + std::to_string (vec_check[3]->get_active ()) + "', "
-					 "v5 = '" + std::to_string (vec_check[4]->get_active ()) + "', "
-					 "v6 = '" + std::to_string (vec_check[5]->get_active ()) + "'");
-		db->command ("UPDATE data_conf SET "
-					 "razon = '" + ety_conf_razon->get_text () + "', "
-					 "direccion = '" + ety_conf_direccion->get_text () + "', "
-					 "rfc = '" + ety_conf_rfc->get_text () + "', "
-					 "contacto = '" + ety_conf_contacto->get_text () + "', "
-					 "regreat = '" + ety_conf_thanks->get_text () + "'");
-	  }
+    if (response == Gtk::ResponseType::NO)
+      {
+        dialog->hide ();
+        initconf ();
+        window_conf_ticket->hide ();
+      }
+    if (response == Gtk::ResponseType::YES)
+      {
+        dialog->hide ();
+        window_conf_ticket->hide ();
+        db->command ("UPDATE conf SET "
+                     "v1 = '"
+                     + std::to_string (vec_check[0]->get_active ())
+                     + "', "
+                       "v2 = '"
+                     + std::to_string (vec_check[1]->get_active ())
+                     + "', "
+                       "v3 = '"
+                     + std::to_string (vec_check[2]->get_active ())
+                     + "', "
+                       "v4 = '"
+                     + std::to_string (vec_check[3]->get_active ())
+                     + "', "
+                       "v5 = '"
+                     + std::to_string (vec_check[4]->get_active ())
+                     + "', "
+                       "v6 = '"
+                     + std::to_string (vec_check[5]->get_active ()) + "'");
+        db->command ("UPDATE data_conf SET "
+                     "razon = '"
+                     + ety_conf_razon->get_text ()
+                     + "', "
+                       "direccion = '"
+                     + ety_conf_direccion->get_text ()
+                     + "', "
+                       "rfc = '"
+                     + ety_conf_rfc->get_text ()
+                     + "', "
+                       "contacto = '"
+                     + ety_conf_contacto->get_text ()
+                     + "', "
+                       "regreat = '"
+                     + ety_conf_thanks->get_text () + "'");
+      }
   });
   dialog->set_hide_on_close (true);
   dialog->show ();
   return true;
-	}
+}
 
 void
 Pos::initconf ()
@@ -570,6 +595,7 @@ Pos::initconf ()
     {
       vec_check[i]->set_active (std::stoi (db->get_result ()[0][i]));
     }
+	
   result.clear ();
 
   db->command ("SELECT * FROM data_conf");

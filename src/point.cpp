@@ -131,11 +131,15 @@ void Pos::on_btn_pago_efectivo_clicked()
     archivoTemp.close();
 
 #ifdef __linux__
-    std::system("lp temp.txt");
+    bool activo = false;
+        if(  impresion_act->get_state(activo); activo) 
+          std::system("lp temp.txt");
 #endif
 
 #ifdef _WIN32
-    std::system("print temp.txt");
+    bool activo = false;
+        if(  impresion_act->get_state(activo); activo) 
+          std::system("print temp.txt");
 #endif
 
 remove("temp.txt");

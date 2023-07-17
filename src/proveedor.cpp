@@ -47,7 +47,20 @@ Pos::Pos(const Glib::RefPtr<Gtk::Application>& app)
     
     gmenu->append("_Salir", "app.quit");
 
-    impresion_act = refActionGroup->add_action_bool("config.imprimir",[=](){bool activo = false;  impresion_act->get_state(activo); activo ? impresion_act->change_state(false) : impresion_act->change_state(true);});
+    impresion_act = refActionGroup->add_action_bool("config.imprimir",[=](){
+        bool activo = false;
+        if(  impresion_act->get_state(activo); activo) 
+        impresion_act->change_state(false);
+        else
+         impresion_act->change_state(true);
+
+        db->command("UPDATE conf SET v7 = "+ std::to_string(!activo) );
+        });
+
+    db->command ("SELECT * FROM conf");
+    impresion_act->change_state((bool) std::stoi(db->get_result()[0][6]));
+    result.clear ();
+
     refActionGroup->add_action("config.ticket",[=](){window_conf_ticket->show();});
     insert_action_group("popupmain", refActionGroup);
     m_MenuPopup_main.set_menu_model(gmenu);
