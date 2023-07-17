@@ -124,8 +124,6 @@ void Pos::on_btn_pago_efectivo_clicked()
              << "\n"
              << "--------------------------------\n";
 
-    std::cout << ticket.str() << std::endl;
-
     std::ofstream archivoTemp("temp.txt");
     archivoTemp << ticket.str();
     archivoTemp.close();
