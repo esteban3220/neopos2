@@ -183,15 +183,9 @@ void Pos::add_articulo_venta()
         {
           if (row_venta[m_Columns_venta.sku] == row[m_Columns_prod.sku])
           {
-            row_venta[m_Columns_venta.cantidad] = row_venta[m_Columns_venta.cantidad].
-                                                  operator std::size_t() +
-                                                  1;
-            row_venta[m_Columns_venta.precio_t] = row_venta[m_Columns_venta.cantidad].
-                                                  operator std::size_t() *
-                                                  row_venta[m_Columns_venta.precio_u].
-                                                  operator float();
-            total_vcarrito += row_venta[m_Columns_venta.precio_u].
-                              operator float();
+            row_venta[m_Columns_venta.cantidad] = row_venta[m_Columns_venta.cantidad]. operator std::size_t() + 1;
+            row_venta[m_Columns_venta.precio_t] = row_venta[m_Columns_venta.cantidad]. operator std::size_t() * row_venta[m_Columns_venta.precio_u]. operator float();
+            total_vcarrito += row_venta[m_Columns_venta.precio_u]. operator float();
             ety_barras->set_text("");
             ss << std::fixed << std::setprecision(2)
                << total_vcarrito;
@@ -252,6 +246,54 @@ bool Pos::on_spin_ingreso_activate(guint keyval, guint, Gdk::ModifierType state)
     std::cout << "F12" << std::endl;
     return true;
   }
+  if(keyval == GDK_KEY_plus)
+  {
+    if(tree_venta->is_focus())
+	{
+		std::stringstream ss;
+		auto row = tree_venta->get_selection()->get_selected();
+		(*row)[m_Columns_venta.cantidad] = (*row)[m_Columns_venta.cantidad].operator std::size_t() + 1;
+		(*row)[m_Columns_venta.precio_t] = (*row)[m_Columns_venta.cantidad].operator std::size_t() * (*row)[m_Columns_venta.precio_u].operator float();
+		total_vcarrito += (*row)[m_Columns_venta.precio_u].operator float();
+		ss << std::fixed << std::setprecision(2)
+		<< total_vcarrito;
+		lbl_precio_total->set_markup("$<span font_desc='50'>" + ss.str() + "</span>");  
+		on_spin_ingreso_changed();
+		std::cout << "plus" << std::endl;
+		return true;
+    }
+  }
+  if (keyval == GDK_KEY_minus)
+        {
+          if (tree_venta->is_focus ())
+            {
+              std::stringstream ss;
+              auto row = tree_venta->get_selection()->get_selected ();
+
+              total_vcarrito -= (*row)[m_Columns_venta.precio_t];
+              ModelCarroVenta->erase (row);
+
+              ss << std::fixed << std::setprecision (2) << total_vcarrito;
+              lbl_precio_total->set_markup ("$<span font_desc='50'>" + ss.str () + "</span>");
+              std::cout << "minus" << std::endl;
+			  on_spin_ingreso_changed();
+              return true;
+            }
+        }
+	if (keyval == GDK_KEY_Escape)
+	{
+		if (tree_venta->is_focus ())
+		{
+			std::stringstream ss;
+			ModelCarroVenta->clear();
+			total_vcarrito = 0;
+			ss << std::fixed << std::setprecision (2) << total_vcarrito;
+			lbl_precio_total->set_markup ("$<span font_desc='50'>" + ss.str () + "</span>");
+			std::cout << "Escape" << std::endl;
+			on_spin_ingreso_changed();
+			return true;
+		}
+	}
   return false;
 }
 

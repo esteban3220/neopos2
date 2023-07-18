@@ -58,6 +58,7 @@
                             <child>
                               <object class="GtkTreeView" id="tree_venta">
                                 <property name="enable-grid-lines">2</property>
+                                <property name="enable-search">False</property>
                               </object>
                             </child>
                           </object>
