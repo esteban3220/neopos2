@@ -91,9 +91,10 @@ void Pos::on_menu_file_popup_generic()
         auto iter = refSelection->get_selected();
         if (iter)
         {
-            dialog.reset(new Gtk::MessageDialog(*this, "Cancelacion de Venta.", false, Gtk::MessageType::INFO, Gtk::ButtonsType::OK_CANCEL, true));
+            dialog.reset(new Gtk::MessageDialog(*this, "Cancelacion de Venta.", false, Gtk::MessageType::INFO, Gtk::ButtonsType::CANCEL, true));
             dialog->set_secondary_text("Escriba el motivo de la cancelacion.");
             dialog->get_content_area()->append(ety_folio);
+            dialog->add_button("Cancelar Venta", Gtk::ResponseType::OK)->set_css_classes({"destructive-action"});
             ety_folio.show();
             dialog->signal_response().connect([=](int response){
                 if(response == Gtk::ResponseType::OK){

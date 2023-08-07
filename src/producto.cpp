@@ -58,11 +58,23 @@ void Pos::init_producto()
     col_subcategoria->pack_start(*cell_subcategoria);
 
     // Make all the columns reorderable and resizable:
-    for (auto &column : tree_prod->get_columns())
+    for (auto& column : tree_prod->get_columns())
     {
         column->set_reorderable();
         column->set_resizable(true);
     }
+
+    //SORT
+
+    col_sku->set_sort_column(m_Columns_prod.sku);
+    col_nombre->set_sort_column(m_Columns_prod.nombre);
+    col_caducidad->set_sort_column(m_Columns_prod.caducidad);
+    col_marca->set_sort_column(m_Columns_prod.marca);
+    col_nota->set_sort_column(m_Columns_prod.nota);
+    col_piezas->set_sort_column(m_Columns_prod.piezas);
+    col_precio_u->set_sort_column(m_Columns_prod.precio_u);
+    col_categoria->set_sort_column(m_Columns_prod.categoria);
+    col_subcategoria->set_sort_column(m_Columns_prod.subcategoria);
 
     cell_sku->property_editable() = true;
     cell_nombre->property_editable() = true;
@@ -122,7 +134,7 @@ void Pos::init_producto()
     lbl_cont_prod->set_text("Productos: " + std::to_string(cont_prod));
 }
 
-void Pos::on_cell_marca_changed(int response_id, const Glib::ustring &path_string, const Gtk::TreeModel::iterator &val)
+void Pos::on_cell_marca_changed(int response_id, const Glib::ustring& path_string, const Gtk::TreeModel::iterator& val)
 {
     switch (response_id)
     {
@@ -148,7 +160,7 @@ void Pos::on_cell_marca_changed(int response_id, const Glib::ustring &path_strin
     }
 }
 
-void Pos::on_cell_categoria_changed(int response_id, const Glib::ustring &path_string, const Gtk::TreeModel::iterator &val)
+void Pos::on_cell_categoria_changed(int response_id, const Glib::ustring& path_string, const Gtk::TreeModel::iterator& val)
 {
     switch (response_id)
     {
@@ -163,7 +175,7 @@ void Pos::on_cell_categoria_changed(int response_id, const Glib::ustring &path_s
             if (subcategoria_map.find((*val)[m_ColumnsCategoria.m_col_name].operator Glib::ustring()) != subcategoria_map.end())
             {
                 m_refTreeModelSubCategoria = Gtk::ListStore::create(m_ColumnsSubCategoria);
-                for (auto &sub : subcategoria_map[(*val)[m_ColumnsCategoria.m_col_name].operator Glib::ustring()])
+                for (auto& sub : subcategoria_map[(*val)[m_ColumnsCategoria.m_col_name].operator Glib::ustring()])
                 {
                     row_subcategoria = *(m_refTreeModelSubCategoria->append());
                     row_subcategoria[m_ColumnsSubCategoria.m_col_name] = sub;
@@ -184,7 +196,7 @@ void Pos::on_cell_categoria_changed(int response_id, const Glib::ustring &path_s
     }
 }
 
-void Pos::on_cell_subcategoria_changed(int response_id, const Glib::ustring &path_string, const Gtk::TreeModel::iterator &val)
+void Pos::on_cell_subcategoria_changed(int response_id, const Glib::ustring& path_string, const Gtk::TreeModel::iterator& val)
 {
     switch (response_id)
     {
@@ -210,7 +222,7 @@ void Pos::on_cell_subcategoria_changed(int response_id, const Glib::ustring &pat
     }
 }
 
-void Pos::on_cell_data_func_u(Gtk::CellRenderer *renderer, const Gtk::TreeModel::const_iterator &iter)
+void Pos::on_cell_data_func_u(Gtk::CellRenderer* renderer, const Gtk::TreeModel::const_iterator& iter)
 {
     if (iter)
     {
@@ -223,23 +235,24 @@ void Pos::on_cell_data_func_u(Gtk::CellRenderer *renderer, const Gtk::TreeModel:
 
 void Pos::on_btn_remove_prod_clicked()
 {
-    dialog.reset(new Gtk::MessageDialog(*this, "Eliminar", true, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true));
+    dialog.reset(new Gtk::MessageDialog(*this, "Eliminar", true, Gtk::MessageType::QUESTION, Gtk::ButtonsType::CANCEL, true));
     dialog->set_secondary_text("¿Desea eliminar el producto?");
+    dialog->add_button("Eliminar", Gtk::ResponseType::OK)->set_css_classes({ "destructive-action" });
     dialog->signal_response().connect([this](int response)
-                                      {
-        if(response == Gtk::ResponseType::OK){
-            auto iter = tree_prod->get_selection()->get_selected();
-            if(iter){
-                db->command("delete from producto where sku = " + std::to_string((*iter)[m_Columns_prod.sku]));
-                m_refTreeModel_prod->erase(iter);
-                lbl_cont_prod->set_text("Productos: " + std::to_string(m_refTreeModel_prod->children().size()));
+        {
+            if (response == Gtk::ResponseType::OK) {
+                auto iter = tree_prod->get_selection()->get_selected();
+                if (iter) {
+                    db->command("delete from producto where sku = " + std::to_string((*iter)[m_Columns_prod.sku]));
+                    m_refTreeModel_prod->erase(iter);
+                    lbl_cont_prod->set_text("Productos: " + std::to_string(m_refTreeModel_prod->children().size()));
+                }
             }
-        }
-        dialog->close(); });
+            dialog->close(); });
     dialog->show();
 }
 
-void Pos::on_produ_dialog_edit_response(int response_id, const Glib::ustring &path_string, const Glib::ustring &new_text, const int &column)
+void Pos::on_produ_dialog_edit_response(int response_id, const Glib::ustring& path_string, const Glib::ustring& new_text, const int& column)
 {
     switch (response_id)
     {
@@ -321,13 +334,13 @@ void Pos::on_produ_dialog_edit_response(int response_id, const Glib::ustring &pa
                 }
                 }
             }
-            catch (std::exception &e)
+            catch (std::exception& e)
             {
                 std::cout << e.what() << std::endl;
                 dialog_error.reset(new Gtk::MessageDialog(*this, "Error al editar un Registro", false, Gtk::MessageType::ERROR, Gtk::ButtonsType::OK, true));
                 dialog_error->set_secondary_text(e.what());
                 dialog_error->signal_response().connect([this](int response)
-                                                        { dialog_error->close(); });
+                    { dialog_error->close(); });
                 dialog_error->set_hide_on_close(true);
                 dialog_error->show();
             }
@@ -376,8 +389,11 @@ void Pos::add_articulo_venta_popover()
                 break;
             }
         }
+        ety_articulo_popover.set_text("");
+        lbl_articulo_popover.set_text("");
+        spin_cantidad_articulo_popover.set_value(0);
     }
-    catch (std::exception &e)
+    catch (std::exception& e)
     {
         std::cout << e.what() << std::endl;
     }
@@ -390,7 +406,7 @@ void Pos::add_btn_articulo_venta_popover()
         dialog.reset(new Gtk::MessageDialog(*this, "Error al agregar articulo", false, Gtk::MessageType::ERROR, Gtk::ButtonsType::OK, true));
         dialog->set_secondary_text("No se puede agregar un articulo sin nombre, sin cantidad o sin SKU");
         dialog->signal_response().connect([this](int response)
-                                                { dialog->close(); });
+            { dialog->close(); });
         dialog->set_hide_on_close(true);
         dialog->show();
         return;
@@ -401,32 +417,33 @@ void Pos::add_btn_articulo_venta_popover()
         dialog.reset(new Gtk::MessageDialog(*this, "Agregar articulo", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::YES_NO, true));
         dialog->set_secondary_text("¿Desea agregar " + std::to_string(spin_cantidad_articulo_popover.get_value_as_int()) + ", " + lbl_articulo_popover.get_text() + " a la venta?");
         dialog->signal_response().connect([this](int response)
-                                          { if (response == Gtk::ResponseType::YES)
-                                            {
-                                                db->command("update producto set piezas = piezas + " + std::to_string(spin_cantidad_articulo_popover.get_value_as_int()) + " where sku = " + ety_articulo_popover.get_text());
-                                                for (auto row : m_refTreeModel_prod->children()) 
-                                                {
-                                                    if (row[m_Columns_prod.sku] == std::stoll(ety_articulo_popover.get_text()))
-                                                    {
-                                                        row[m_Columns_prod.piezas] = (row[m_Columns_prod.piezas]) + spin_cantidad_articulo_popover.get_value_as_int();
-                                                        break;
-                                                    }
-                                                }
-                                            }else if (response == Gtk::ResponseType::NO)
-                                                {
-                                                    dialog->close();
-                                                }
-                                            dialog->close();
-                                            dialog->set_default_response(Gtk::ResponseType::NO);
-                                             });
-        dialog->show();                     
+            { if (response == Gtk::ResponseType::YES)
+        {
+            db->command("update producto set piezas = piezas + " + std::to_string(spin_cantidad_articulo_popover.get_value_as_int()) + " where sku = " + ety_articulo_popover.get_text());
+            for (auto row : m_refTreeModel_prod->children())
+            {
+                if (row[m_Columns_prod.sku] == std::stoll(ety_articulo_popover.get_text()))
+                {
+                    row[m_Columns_prod.piezas] = (row[m_Columns_prod.piezas]) + spin_cantidad_articulo_popover.get_value_as_int();
+                    break;
+                }
+            }
+        }
+            else if (response == Gtk::ResponseType::NO)
+        {
+            dialog->close();
+        }
+        dialog->close();
+        dialog->set_default_response(Gtk::ResponseType::NO);
+            });
+        dialog->show();
     }
 }
 
 void Pos::llena_subca()
 {
 
-    const char *aba[] = {
+    const char* aba[] = {
         "Aceite comestibles",
         "Aderezos",
         "Consome",
@@ -460,8 +477,8 @@ void Pos::llena_subca()
         "Te",
         "Vinagre",
         "Huevo",
-        "Pastas"};
-    const char *enlatados[] = {
+        "Pastas" };
+    const char* enlatados[] = {
 
         "Aceitunas",
         "Chícharo con zanahoria",
@@ -477,7 +494,7 @@ void Pos::llena_subca()
         "Sopa en lata",
         "Vegetales en conserva",
     };
-    const char *lacteos[] = {
+    const char* lacteos[] = {
 
         "Leche condensada",
         "Leche deslactosada",
@@ -492,8 +509,8 @@ void Pos::llena_subca()
         "Mantequilla",
         "Margarina",
         "Media crema",
-        "Queso"};
-    const char *dulces[] = {
+        "Queso" };
+    const char* dulces[] = {
 
         "Caramelos",
         "Dulces enchilados",
@@ -505,8 +522,8 @@ void Pos::llena_subca()
         "Malvaviscos",
         "Pulpa de tamarindo",
         "Pastillas de dulce",
-        "Paletas de dulce"};
-    const char *harinas[] = {
+        "Paletas de dulce" };
+    const char* harinas[] = {
         "Tortillas de harina/maíz",
         "Galletas dulces",
         "Galletas saladas",
@@ -514,8 +531,8 @@ void Pos::llena_subca()
         "Pan de caja",
         "Pan dulce",
         "Pan molido",
-        "Pan tostado"};
-    const char *verduras[] = {
+        "Pan tostado" };
+    const char* verduras[] = {
         "Aguacates",
         "Ajos",
         "Cebollas",
@@ -526,8 +543,8 @@ void Pos::llena_subca()
         "Limones",
         "Manzanas",
         "Naranjas",
-        "Plátanos"};
-    const char *alcohol[] = {
+        "Plátanos" };
+    const char* alcohol[] = {
         "Bebidas preparadas",
         "Cerveza",
         "Anís",
@@ -540,8 +557,8 @@ void Pos::llena_subca()
         "Tequila",
         "Sidra",
         "Whiskey",
-        "Vodka"};
-    const char *bebidas[] = {
+        "Vodka" };
+    const char* bebidas[] = {
         "Agua mineral",
         "Agua natural",
         "Agua saborizada",
@@ -554,8 +571,8 @@ void Pos::llena_subca()
         "Bebidas isotónicas",
         "Energetizantes",
         "Isotónicos",
-        "Refrescos"};
-    const char *preparado[] = {
+        "Refrescos" };
+    const char* preparado[] = {
 
         "Pastas listas para comer",
         "Sopas en vaso",
@@ -566,8 +583,8 @@ void Pos::llena_subca()
         "Jamón",
         "Manteca",
         "Chorizo",
-        "Carne de puerco/res/pollo"};
-    const char *automedicacion[] = {
+        "Carne de puerco/res/pollo" };
+    const char* automedicacion[] = {
         "Suero",
         "Agua oxigenada",
         "Preservativos",
@@ -575,8 +592,8 @@ void Pos::llena_subca()
         "Gasas",
         "Analgésicos",
         "Antigripales",
-        "Antiácidos"};
-    const char *personal[] = {
+        "Antiácidos" };
+    const char* personal[] = {
         "Toallas húmedas",
         "Aceite para bebe",
         "Toallas femeninas",
@@ -600,8 +617,8 @@ void Pos::llena_subca()
         "Lubricantes para labios",
         "Gel/spray",
         "Loción hidratante",
-        "Jabones corporales/tocador"};
-    const char *domestico[] = {
+        "Jabones corporales/tocador" };
+    const char* domestico[] = {
         "Suavizante de telas",
         "Ácido muriático",
         "Sosa caustica",
@@ -624,8 +641,8 @@ void Pos::llena_subca()
         "Fibras limpiadoras",
         "Desinfectantes",
         "Detergentes para trastes",
-        "Detergente para ropa"};
-    const char *limpieza[] = {
+        "Detergente para ropa" };
+    const char* limpieza[] = {
         "Veladoras/Velas",
         "Cepillo de plástico",
         "Vasos desechables",
@@ -643,8 +660,8 @@ void Pos::llena_subca()
         "Jergas/Franelas",
         "Matamoscas",
         "Pegamento",
-        "Mecate/cuerda"};
-    const char *botanas[] = {
+        "Mecate/cuerda" };
+    const char* botanas[] = {
 
         "Papas",
         "Palomitas",
@@ -652,12 +669,12 @@ void Pos::llena_subca()
         "Cacahuates",
         "Botanas saladas",
         "Barras alimenticias",
-        "Nueces y semillas"};
-    const char *otros[] = {
+        "Nueces y semillas" };
+    const char* otros[] = {
         "Tarjetas telefónicas",
         "Recargas móviles",
         "Hielo",
-        "Cigarros"};
+        "Cigarros" };
 
     std::vector<std::string> abarrote;
     std::vector<std::string> enlatado;
@@ -754,9 +771,17 @@ void Pos::llena_subca()
 
     auto iter_C = Gtk::TreeModel::iterator();
 
-    for (const auto &list : subcategoria_map)
+    for (const auto& list : subcategoria_map)
     {
         iter_C = m_refTreeModelCategoria->append();
         (*iter_C)[m_ColumnsCategoria.m_col_name] = list.first;
     }
+}
+
+bool Pos::add_match_producto(const Gtk::TreeModel::iterator& iter)
+{
+    ety_articulo_popover.set_text(std::to_string((*iter)[m_Columns_prod.sku]));
+    lbl_articulo_popover.set_text((*iter)[m_Columns_prod.nombre]);
+    spin_cantidad_articulo_popover.set_value(0);
+    return true;
 }

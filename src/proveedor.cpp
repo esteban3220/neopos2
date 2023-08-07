@@ -28,6 +28,9 @@ Pos::Pos(const Glib::RefPtr<Gtk::Application>& app)
     ety_barras->set_completion(completion_pos);
     completion_pos->set_model(m_refTreeModel_prod);
     completion_pos->set_text_column(m_Columns_prod.nombre);
+    ety_articulo_popover.set_completion(completion_producto);
+    completion_producto->set_model(m_refTreeModel_prod);
+    completion_producto->set_text_column(m_Columns_prod.nombre);
     spin_ingreso->set_adjustment(Gtk::Adjustment::create(0.0, 0.0, 100000.0, 1.0, 10.0, 0.0));
     spin_cantidad_articulo_popover.set_adjustment(Gtk::Adjustment::create(0.0, 0.0, 100000.0, 1.0, 10.0, 0.0));
     refGesture->set_button(GDK_BUTTON_SECONDARY);
@@ -117,7 +120,8 @@ void Pos::carga_señales()
     cell4->signal_edited().connect(sigc::mem_fun(*this, &Pos::on_cell4_edited));
     ety_barras->signal_activate().connect(sigc::mem_fun(*this, &Pos::add_articulo_venta));
     completion_pos->signal_match_selected().connect(sigc::mem_fun(*this, &Pos::add_match_arcticulo), false);
-    spin_ingreso->signal_value_changed().connect(sigc::mem_fun(*this, &Pos::on_spin_ingreso_changed));
+    completion_producto->signal_match_selected().connect(sigc::mem_fun(*this, &Pos::add_match_producto), false);
+    spin_ingreso->signal_changed().connect(sigc::mem_fun(*this, &Pos::on_spin_ingreso_changed));
     controller->signal_key_pressed().connect(sigc::mem_fun(*this, &Pos::on_spin_ingreso_activate), false);
     btn_pago_efectivo->signal_clicked().connect(sigc::mem_fun(*this, &Pos::cierra_venta));
     btn_pago_tarjeta->signal_clicked().connect(sigc::mem_fun(*this, &Pos::on_btn_pago_tarjeta_clicked));
@@ -339,9 +343,10 @@ void Pos::on_btn_add_clicked()
 
 void Pos::on_btn_remove_clicked()
 {
-    dialog.reset(new Gtk::MessageDialog(*this, "Eliminar", true, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true));
+    dialog.reset(new Gtk::MessageDialog(*this, "Eliminar", true, Gtk::MessageType::QUESTION, Gtk::ButtonsType::CANCEL, true));
     dialog->set_secondary_text("¿Desea eliminar el registro?");
     dialog->property_text().set_value("Eliminar");
+    dialog->add_button("Eliminar", Gtk::ResponseType::OK)->set_css_classes({"destructive-action"});
     dialog->signal_response().connect(sigc::mem_fun(*this, &Pos::on_prov_dialog_remove_response));
     dialog->set_default_response(Gtk::ResponseType::OK);
     dialog->show();

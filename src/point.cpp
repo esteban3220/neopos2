@@ -202,15 +202,16 @@ void Pos::add_articulo_venta()
         row_venta[m_Columns_venta.precio_t] = row[m_Columns_prod.precio_u].operator float();
         total_vcarrito += row[m_Columns_prod.precio_u];
         ss << std::fixed << std::setprecision(2) << total_vcarrito;
-        ety_barras->set_text("");
         lbl_precio_total->set_markup("$<span font_desc='50'>" + ss.str() + "</span>");
         on_spin_ingreso_changed();
         break;
       }
     }
+    ety_barras->set_text("");
   }
   catch (std::exception &e)
   {
+    ety_barras->set_text("");
     std::cout << e.what() << std::endl;
   }
 }
@@ -391,3 +392,4 @@ bool Pos::add_match_arcticulo(const Gtk::TreeModel::iterator &iter)
   on_spin_ingreso_changed();
   return true;
 }
+

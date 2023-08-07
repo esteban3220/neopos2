@@ -273,6 +273,7 @@ private:
     void init_detalle_venta();
     void add_articulo_venta();
     bool add_match_arcticulo(const Gtk::TreeModel::iterator &iter);
+    bool add_match_producto(const Gtk::TreeModel::iterator &iter);
     bool on_window_conf_ticket_delete_event();
     void on_spin_ingreso_changed();
     void on_btn_pago_efectivo_clicked();
@@ -302,6 +303,7 @@ private:
     void edit_ticket();
 
     Glib::RefPtr<Gtk::EntryCompletion> completion_pos = Gtk::EntryCompletion::create();
+    Glib::RefPtr<Gtk::EntryCompletion> completion_producto = Gtk::EntryCompletion::create();
     Glib::RefPtr<Gio::SimpleAction> impresion_act;
     Glib::RefPtr<Gtk::TextBuffer> m_refTextBuffer1 = Gtk::TextBuffer::create();
 

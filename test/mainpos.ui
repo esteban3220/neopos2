@@ -278,12 +278,6 @@
                                 <property name="tooltip-text">Elimina un registro.</property>
                               </object>
                             </child>
-                            <child>
-                              <object class="GtkCheckButton">
-                                <property name="label">Ver Stock bajo.</property>
-                                <property name="tooltip-text">Filtra todo lo que tenga un stock por debajo de 10 articulos.</property>
-                              </object>
-                            </child>
                           </object>
                         </child>
                       </object>
@@ -339,7 +333,6 @@
                                       <object class="GtkTreeView" id="tree_repor">
                                         <property name="activate-on-single-click">true</property>
                                         <property name="enable-grid-lines">1</property>
-                                        <property name="reorderable">true</property>
                                       </object>
                                     </child>
                                   </object>
@@ -374,7 +367,7 @@
               <object class="GtkStackPage">
                 <property name="child">
                   <object class="GtkGrid">
-                    <property name="column-homogeneous">true</property>
+                    <property name="column-homogeneous">True</property>
                     <child>
                       <object class="GtkLabel">
                         <property name="label">a</property>
