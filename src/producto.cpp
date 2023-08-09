@@ -377,28 +377,6 @@ void Pos::init_popover_articulo()
     ety_articulo_popover.set_placeholder_text("Inserte el SKU del articulo");
 }
 
-void Pos::add_articulo_venta_popover()
-{
-    try
-    {
-        for (auto row : m_refTreeModel_prod->children())
-        {
-            if (row[m_Columns_prod.sku] == std::stoll(ety_articulo_popover.get_text()))
-            {
-                lbl_articulo_popover.set_text(row[m_Columns_prod.nombre]);
-                break;
-            }
-        }
-        ety_articulo_popover.set_text("");
-        lbl_articulo_popover.set_text("");
-        spin_cantidad_articulo_popover.set_value(0);
-    }
-    catch (std::exception& e)
-    {
-        std::cout << e.what() << std::endl;
-    }
-}
-
 void Pos::add_btn_articulo_venta_popover()
 {
     if (lbl_articulo_popover.get_text().empty() || spin_cantidad_articulo_popover.get_value() == 0 || ety_articulo_popover.get_text().empty())
@@ -428,6 +406,9 @@ void Pos::add_btn_articulo_venta_popover()
                     break;
                 }
             }
+            ety_articulo_popover.set_text("");
+            lbl_articulo_popover.set_text("");
+            spin_cantidad_articulo_popover.set_value(0);
         }
             else if (response == Gtk::ResponseType::NO)
         {
@@ -775,6 +756,25 @@ void Pos::llena_subca()
     {
         iter_C = m_refTreeModelCategoria->append();
         (*iter_C)[m_ColumnsCategoria.m_col_name] = list.first;
+    }
+}
+
+void Pos::add_articulo_venta_popover()
+{
+    try
+    {
+        for (auto row : m_refTreeModel_prod->children())
+        {
+            if (row[m_Columns_prod.sku] == std::stoll(ety_articulo_popover.get_text()))
+            {
+                lbl_articulo_popover.set_text(row[m_Columns_prod.nombre]);
+                break;
+            }
+        }
+    }
+    catch (std::exception& e)
+    {
+        std::cout << e.what() << std::endl;
     }
 }
 
