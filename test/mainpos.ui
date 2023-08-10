@@ -372,7 +372,7 @@
                 <child>
                   <object class="GtkFrame">
                     <property name="child">
-                      <object class="GtkLabel">
+                      <object class="GtkLabel" id="lbl_venta_dia">
                         <property name="label">$0.00</property>
                         <property name="use-markup">true</property>
                       </object>
@@ -389,7 +389,7 @@
                 <child>
                   <object class="GtkFrame">
                     <property name="child">
-                      <object class="GtkLabel">
+                      <object class="GtkLabel" id="lbl_venta_min_mes">
                         <property name="label">$0.00</property>
                         <property name="use-markup">true</property>
                       </object>
@@ -406,7 +406,7 @@
                 <child>
                   <object class="GtkFrame">
                     <property name="child">
-                      <object class="GtkLabel">
+                      <object class="GtkLabel" id="lbl_clientes_dia">
                         <property name="label">10</property>
                         <property name="use-markup">true</property>
                       </object>
@@ -423,7 +423,7 @@
                 <child>
                   <object class="GtkFrame">
                     <property name="child">
-                      <object class="GtkLabel">
+                      <object class="GtkLabel" id="lbl_venta_mes">
                         <property name="label">$0.00</property>
                         <property name="use-markup">true</property>
                       </object>
@@ -440,7 +440,7 @@
                 <child>
                   <object class="GtkFrame">
                     <property name="child">
-                      <object class="GtkLabel">
+                      <object class="GtkLabel" id="lbl_venta_min_anio">
                         <property name="label">$0.00</property>
                         <property name="use-markup">true</property>
                       </object>
@@ -457,7 +457,7 @@
                 <child>
                   <object class="GtkFrame">
                     <property name="child">
-                      <object class="GtkLabel">
+                      <object class="GtkLabel" id="lbl_venta_anio">
                         <property name="label">$0.00</property>
                         <property name="use-markup">true</property>
                       </object>
@@ -473,8 +473,8 @@
                 <child>
                   <object class="GtkFrame">
                     <property name="child">
-                      <object class="GtkLabel">
-                        <property name="label">$0.00</property>
+                      <object class="GtkLabel" id="lbl_venta_anio_anterior">
+                        <property name="label">$&lt;span font_desc='50'&gt;0.00 &lt;/span&gt;</property>
                         <property name="use-markup">true</property>
                       </object>
                     </property>
@@ -489,7 +489,7 @@
                 <child>
                   <object class="GtkFrame">
                     <property name="child">
-                      <object class="GtkLabel">
+                      <object class="GtkLabel" id="lbl_venta_max_mes">
                         <property name="label">$0.00</property>
                         <property name="use-markup">true</property>
                       </object>
@@ -505,7 +505,7 @@
                 <child>
                   <object class="GtkFrame">
                     <property name="child">
-                      <object class="GtkLabel">
+                      <object class="GtkLabel" id="lbl_venta_max_anio">
                         <property name="label">$0.00</property>
                         <property name="use-markup">true</property>
                       </object>

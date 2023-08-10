@@ -22,6 +22,7 @@ Pos::Pos(const Glib::RefPtr<Gtk::Application>& app)
     header_bar.pack_start(menu_button);
     header_bar.set_title_widget(stack_switcher);
     init();
+    act_dashboard();
     init_producto();
     carga_señales();
     llena_subca();
@@ -97,6 +98,16 @@ void Pos::cargar_glade()
     btn_add_piezas = builder->m_refBuilder->get_widget<Gtk::Button>("btn_add_piezas");
     tree_repor = builder->m_refBuilder->get_widget<Gtk::TreeView>("tree_repor");
     tree_detalle_venta = builder->m_refBuilder->get_widget<Gtk::TreeView>("tree_detalle_venta");
+    lbl_venta_dia = builder->m_refBuilder->get_widget<Gtk::Label>("lbl_venta_dia");
+    lbl_venta_mes = builder->m_refBuilder->get_widget<Gtk::Label>("lbl_venta_mes");
+    lbl_venta_anio = builder->m_refBuilder->get_widget<Gtk::Label>("lbl_venta_anio");
+    lbl_clientes_dia = builder->m_refBuilder->get_widget<Gtk::Label>("lbl_clientes_dia");
+    lbl_venta_min_mes = builder->m_refBuilder->get_widget<Gtk::Label>("lbl_venta_min_mes");
+    lbl_venta_min_anio = builder->m_refBuilder->get_widget<Gtk::Label>("lbl_venta_min_anio");
+    lbl_venta_max_mes = builder->m_refBuilder->get_widget<Gtk::Label>("lbl_venta_max_mes");
+    lbl_venta_max_anio = builder->m_refBuilder->get_widget<Gtk::Label>("lbl_venta_max_anio");
+    lbl_venta_anio_anterior = builder->m_refBuilder->get_widget<Gtk::Label>("lbl_venta_anio_anterior");
+
 
     lbl_precio_total->set_markup("$<span font_desc='50'>0.00</span>");
     stack_switcher.set_stack(*stack_main_pos);

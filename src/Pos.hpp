@@ -300,6 +300,7 @@ private:
 
     void on_popup_button_pressed(int n_press, double x, double y);
     void on_menu_file_popup_generic();
+    void act_dashboard();
     void edit_ticket();
 
     Glib::RefPtr<Gtk::EntryCompletion> completion_pos = Gtk::EntryCompletion::create();
@@ -319,6 +320,7 @@ protected:
     Gtk::Stack *stack_main_pos;
     Gtk::MenuButton menu_button;
     Gtk::Label *lbl_cambio, lbl_articulo_popover;
+    Gtk::Label *lbl_venta_dia,*lbl_clientes_dia,*lbl_venta_mes,*lbl_venta_min_mes,*lbl_venta_max_mes,*lbl_venta_anio,*lbl_venta_min_anio,*lbl_venta_max_anio,*lbl_venta_anio_anterior;
     Gtk::Popover popover_ingreso_articulos;
     Gtk::PopoverMenu m_MenuPopup;
     Gtk::SpinButton *spin_ingreso;

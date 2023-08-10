@@ -162,6 +162,7 @@ remove("temp.txt");
     total_vcarrito = 0.0f;
     lbl_precio_total->set_markup("$<span font_desc='50'>0.00</span>");
     ModelCarroVenta->clear();
+    act_dashboard();
   }
 }
 
