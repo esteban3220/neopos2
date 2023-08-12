@@ -107,6 +107,7 @@ private:
             add(nota);
             add(piezas);
             add(precio_u);
+            add(granel);
             add(categoria);
             add(subcategoria);
         }
@@ -116,8 +117,9 @@ private:
         Gtk::TreeModelColumn<Glib::ustring> caducidad;
         Gtk::TreeModelColumn<Glib::ustring> marca;
         Gtk::TreeModelColumn<Glib::ustring> nota;
-        Gtk::TreeModelColumn<int> piezas;
+        Gtk::TreeModelColumn<Glib::ustring> piezas;
         Gtk::TreeModelColumn<float> precio_u;
+        Gtk::TreeModelColumn<bool> granel;
         Gtk::TreeModelColumn<Glib::ustring> categoria;
         Gtk::TreeModelColumn<Glib::ustring> subcategoria;
     };
@@ -160,7 +162,7 @@ private:
     Gtk::CellRendererText *cell_nota = Gtk::manage(new Gtk::CellRendererText());
     Gtk::CellRendererText *cell_piezas = Gtk::manage(new Gtk::CellRendererText());
     Gtk::CellRendererSpin *cell_precio_u = Gtk::manage(new Gtk::CellRendererSpin());
-    Gtk::CellRendererSpin *cell_compra_t = Gtk::manage(new Gtk::CellRendererSpin());
+    Gtk::CellRendererToggle *cell_granel = Gtk::manage(new Gtk::CellRendererToggle());
     Gtk::CellRendererCombo *cell_categoria = Gtk::make_managed<Gtk::CellRendererCombo>();
     Gtk::CellRendererCombo *cell_subcategoria = Gtk::make_managed<Gtk::CellRendererCombo>();
 
@@ -171,6 +173,7 @@ private:
     Gtk::TreeViewColumn *col_nota = nullptr;
     Gtk::TreeViewColumn *col_piezas = nullptr;
     Gtk::TreeViewColumn *col_precio_u = nullptr;
+    Gtk::TreeViewColumn *col_granel = nullptr;
     Gtk::TreeViewColumn *col_compra_t = nullptr;
     Gtk::TreeViewColumn *col_categoria = nullptr;
     Gtk::TreeViewColumn *col_subcategoria = nullptr;
@@ -235,7 +238,7 @@ private:
         }
 
         Gtk::TreeModelColumn<size_t> sku;
-        Gtk::TreeModelColumn<size_t> cantidad;
+        Gtk::TreeModelColumn<float> cantidad;
         Gtk::TreeModelColumn<Glib::ustring> nombre;
         Gtk::TreeModelColumn<float> precio_u;
         Gtk::TreeModelColumn<float> precio_t;
@@ -258,7 +261,7 @@ private:
         }
 
         Gtk::TreeModelColumn<size_t> sku;
-        Gtk::TreeModelColumn<size_t> cantidad;
+        Gtk::TreeModelColumn<float> cantidad;
         Gtk::TreeModelColumn<Glib::ustring> nombre;
         Gtk::TreeModelColumn<float> precio_u;
         Gtk::TreeModelColumn<float> precio_t;
@@ -302,6 +305,7 @@ private:
     void on_menu_file_popup_generic();
     void act_dashboard();
     void edit_ticket();
+    void on_ety_barras_icon_press(Gtk::Entry::IconPosition icon_position);
 
     Glib::RefPtr<Gtk::EntryCompletion> completion_pos = Gtk::EntryCompletion::create();
     Glib::RefPtr<Gtk::EntryCompletion> completion_producto = Gtk::EntryCompletion::create();
@@ -321,12 +325,13 @@ protected:
     Gtk::MenuButton menu_button;
     Gtk::Label *lbl_cambio, lbl_articulo_popover;
     Gtk::Label *lbl_venta_dia,*lbl_clientes_dia,*lbl_venta_mes,*lbl_venta_min_mes,*lbl_venta_max_mes,*lbl_venta_anio,*lbl_venta_min_anio,*lbl_venta_max_anio,*lbl_venta_anio_anterior;
-    Gtk::Popover popover_ingreso_articulos;
+    Gtk::Popover popover_ingreso_articulos,popover_cantidad_articulo,popover_precio_articulo;
     Gtk::PopoverMenu m_MenuPopup;
     Gtk::SpinButton *spin_ingreso;
     Gtk::Button *btn_pago_efectivo, *btn_pago_tarjeta, btn_add_articulo_popover, *btn_add_piezas;
     Gtk::Entry ety_folio, ety_articulo_popover;
     Gtk::SpinButton spin_cantidad_articulo_popover;
+    Gtk::SpinButton spin_cantiad_point, spin_precio_piezas,spin_precio_articulo;
     Gtk::PopoverMenu m_MenuPopup_main;
     Gtk::TextView *text_ticket;
     Gtk::ListBox *list_config_visualizacion,*list_config_datos,*list_config_test;
@@ -338,7 +343,7 @@ protected:
 
 public:
     Pos(const Glib::RefPtr<Gtk::Application>& app);
-    ~Pos() {m_MenuPopup.unparent(); m_MenuPopup_main.unparent(); popover_ingreso_articulos.unparent();}
+    ~Pos() {m_MenuPopup.unparent(); m_MenuPopup_main.unparent(); popover_ingreso_articulos.unparent(); popover_precio_articulo.unparent(); popover_cantidad_articulo.unparent();}
 };
 
 #endif // POS_HPP

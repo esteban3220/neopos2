@@ -129,6 +129,7 @@ void Pos::carga_señales()
     cell3->signal_edited().connect(sigc::mem_fun(*this, &Pos::on_cell3_edited));
     cell4->signal_edited().connect(sigc::mem_fun(*this, &Pos::on_cell4_edited));
     ety_barras->signal_activate().connect(sigc::mem_fun(*this, &Pos::add_articulo_venta));
+    ety_barras->signal_icon_press().connect(sigc::mem_fun(*this, &Pos::on_ety_barras_icon_press));
     completion_pos->signal_match_selected().connect(sigc::mem_fun(*this, &Pos::add_match_arcticulo), false);
     completion_producto->signal_match_selected().connect(sigc::mem_fun(*this, &Pos::add_match_producto), false);
     spin_ingreso->signal_changed().connect(sigc::mem_fun(*this, &Pos::on_spin_ingreso_changed));
@@ -136,12 +137,32 @@ void Pos::carga_señales()
     btn_pago_efectivo->signal_clicked().connect(sigc::mem_fun(*this, &Pos::cierra_venta));
     btn_pago_tarjeta->signal_clicked().connect(sigc::mem_fun(*this, &Pos::on_btn_pago_tarjeta_clicked));
     btn_remove_produ->signal_clicked().connect(sigc::mem_fun(*this, &Pos::on_btn_remove_prod_clicked));
-    btn_add_piezas->signal_clicked().connect([this]()
-                                             { popover_ingreso_articulos.popup(); });
+    btn_add_piezas->signal_clicked().connect([this]() { popover_ingreso_articulos.popup(); });
     ety_articulo_popover.signal_activate().connect(sigc::mem_fun(*this, &Pos::add_articulo_venta_popover));
     btn_add_articulo_popover.signal_clicked().connect(sigc::mem_fun(*this, &Pos::add_btn_articulo_venta_popover));
     tree_repor->signal_row_activated().connect(sigc::mem_fun(*this, &Pos::on_tree_detalle_venta_row_activated));
     refGesture->signal_pressed().connect(sigc::mem_fun(*this, &Pos::on_popup_button_pressed));
+    spin_cantiad_point.signal_value_changed().connect([this](){
+        if (spin_cantiad_point.get_value() > 0){
+            ety_barras->set_css_classes({"warning"});
+            ety_barras->set_placeholder_text("Cantidad: " + spin_cantiad_point.get_text() + " Ingrese Codigo de Barras" );
+        }
+        else{
+            ety_barras->set_css_classes({"entry"});
+            ety_barras->set_placeholder_text("Ingrese Codigo de Barras" );
+        }
+    });
+
+    spin_precio_articulo.signal_value_changed().connect([this](){
+        if (spin_precio_articulo.get_value() > 0){
+            ety_barras->set_css_classes({"warning"});
+            ety_barras->set_placeholder_text("Precio: $" + spin_precio_articulo.get_text() + " Ingrese Codigo de Barras" );
+        }
+        else{
+            ety_barras->set_css_classes({"entry"});
+            ety_barras->set_placeholder_text("Ingrese Codigo de Barras" );
+        }
+    });
 
     add_controller(controller);
     add_controller(refGesture);
@@ -207,6 +228,13 @@ void Pos::carga_señales()
                                                 dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_produ_dialog_edit_response),path_string, new_text, COLUMNS::ColumnProducto::PRECIO_U));
                                                 dialog->set_default_response(Gtk::ResponseType::OK);
                                                 dialog->show(); });
+
+    cell_granel->signal_toggled().connect([this](const Glib::ustring &path_string)
+                                          {dialog.reset(new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true));
+                                            dialog->set_secondary_text("¿Desea habilitar/deshabilitar la venta a Granel de este Producto?");
+                                            dialog->signal_response().connect(sigc::bind(sigc::mem_fun(*this, &Pos::on_produ_dialog_edit_response),path_string, "", COLUMNS::ColumnProducto::GRANEL));
+                                            dialog->set_default_response(Gtk::ResponseType::OK);
+                                            dialog->show(); });
 
     cell_categoria->signal_changed().connect([this](const Glib::ustring &path_string, const Gtk::TreeModel::iterator &val)
                                              {dialog.reset(new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true));

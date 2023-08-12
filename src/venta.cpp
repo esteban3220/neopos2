@@ -38,7 +38,7 @@ void Pos::init_detalle_venta()
     tree_detalle_venta->set_model(Modeldetalle_venta);
 
     // tree_detalle_venta->append_column("Código", m_Columns_detalle_venta.sku);
-    tree_detalle_venta->append_column_numeric("Cantidad", m_Columns_detalle_venta.cantidad, "%d");
+    tree_detalle_venta->append_column_numeric("Cantidad", m_Columns_detalle_venta.cantidad, "%.3f");
     tree_detalle_venta->append_column("Descripción", m_Columns_detalle_venta.nombre);
     tree_detalle_venta->append_column_numeric("Precio", m_Columns_detalle_venta.precio_u, "$%.2f");
     tree_detalle_venta->append_column_numeric("Total", m_Columns_detalle_venta.precio_t, "$%.2f");
@@ -61,7 +61,7 @@ void Pos::on_tree_detalle_venta_row_activated(const Gtk::TreeModel::Path &path, 
             {
                 row_detalle_venta = *(Modeldetalle_venta->append());
                 row_detalle_venta[m_Columns_detalle_venta.sku] = std::stoll(tokens[0]);
-                row_detalle_venta[m_Columns_detalle_venta.cantidad] = std::stoi(tokens[1]);
+                row_detalle_venta[m_Columns_detalle_venta.cantidad] = std::stof(tokens[1]);
                 row_detalle_venta[m_Columns_detalle_venta.nombre] = tokens[2];
                 row_detalle_venta[m_Columns_detalle_venta.precio_u] = std::stof(tokens[3]);
                 row_detalle_venta[m_Columns_detalle_venta.precio_t] = std::stof(tokens[1]) * std::stof(tokens[3]);
@@ -150,9 +150,9 @@ void Pos::on_menu_file_popup_generic()
                                 std::cout << tokens[0] << std::endl;
                                 for (auto i : m_refTreeModel_prod->children()){
                                     if(i[m_Columns_prod.sku] == std::stoll(tokens[0])){
-                                        auto a = i[m_Columns_prod.piezas] + std::stoi(tokens[1]);
+                                        auto a = std::stof(i[m_Columns_prod.piezas].operator Glib::ustring()) + std::stof(tokens[1]);
                                         db->command("UPDATE producto SET piezas = " + std::to_string(a) + " WHERE sku = " + std::to_string(std::stoll(tokens[0])));
-                                        (i)[m_Columns_prod.piezas] = a ;
+                                        (i)[m_Columns_prod.piezas] = std::to_string(a) ;
                                         break;
                                     }
                                 }

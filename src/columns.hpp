@@ -19,6 +19,7 @@ namespace COLUMNS
         NOTA,
         PIEZAS,
         PRECIO_U,
+        GRANEL,
         CATEGORIA,
         SUBCATEGORIA
     };

@@ -28,6 +28,8 @@ void Pos::init_producto()
     col_piezas = tree_prod->get_column(id - 1);
     id = tree_prod->append_column("Precio Unitario", *cell_precio_u);
     col_precio_u = tree_prod->get_column(id - 1);
+    id = tree_prod->append_column("Granel", *cell_granel);
+    col_granel = tree_prod->get_column(id - 1);
     id = tree_prod->append_column("Categoria", *cell_categoria);
     col_categoria = tree_prod->get_column(id - 1);
     id = tree_prod->append_column("Subcategoria", *cell_subcategoria);
@@ -42,6 +44,7 @@ void Pos::init_producto()
     col_nota->add_attribute(cell_nota->property_text(), m_Columns_prod.nota);
     col_piezas->add_attribute(cell_piezas->property_text(), m_Columns_prod.piezas);
     col_precio_u->add_attribute(cell_precio_u->property_text(), m_Columns_prod.precio_u);
+    col_granel->add_attribute(cell_granel->property_active(), m_Columns_prod.granel);
     col_categoria->add_attribute(cell_categoria->property_text(), m_Columns_prod.categoria);
     col_subcategoria->add_attribute(cell_subcategoria->property_text(), m_Columns_prod.subcategoria);
 
@@ -82,8 +85,9 @@ void Pos::init_producto()
     cell_nota->property_editable() = true;
     cell_piezas->property_editable() = false;
     cell_precio_u->property_editable() = true;
-    cell_compra_t->property_editable() = true;
+    cell_granel->property_activatable() = true;
     cell_subcategoria->property_editable() = true;
+    cell_categoria->property_editable() = true;
 
     m_refTreeModelCategoria = Gtk::ListStore::create(m_ColumnsCategoria);
     std::cout << "Subcate: " << subcategoria_map.size() << std::endl;
@@ -105,8 +109,6 @@ void Pos::init_producto()
 
     cell_precio_u->property_adjustment() = Gtk::Adjustment::create(0.0, 0.0, 100000.0, 1.0, 2.0, 2.0);
     cell_precio_u->property_digits() = 2;
-    cell_compra_t->property_adjustment() = Gtk::Adjustment::create(0.0, 0.0, 100000.0, 1.0, 2.0, 2.0);
-    cell_compra_t->property_digits() = 2;
 
     // Add some data:
     db->command("SELECT * FROM producto");
@@ -121,11 +123,12 @@ void Pos::init_producto()
         row_producto[m_Columns_prod.marca] = result[i][3];
         cell_marca->property_placeholder_text() = result[i][3];
         row_producto[m_Columns_prod.nota] = result[i][4];
-        row_producto[m_Columns_prod.piezas] = result[i][5] == "NULL" ? 0 : std::stoi(result[i][5]);
+        row_producto[m_Columns_prod.piezas] = result[i][5] == "NULL" ? "0" : result[i][5];
         row_producto[m_Columns_prod.precio_u] = result[i][6] == "NULL" ? 0 : std::stod(result[i][6]);
         row_producto[m_Columns_prod.categoria] = result[i][7];
         cell_categoria->property_placeholder_text() = result[i][7];
         row_producto[m_Columns_prod.subcategoria] = result[i][8];
+        row_producto[m_Columns_prod.granel] = result[i][9] == "1" ? true : false;
     }
 
     result.clear();
@@ -311,13 +314,19 @@ void Pos::on_produ_dialog_edit_response(int response_id, const Glib::ustring& pa
                 case COLUMNS::ColumnProducto::PIEZAS:
                 {
                     db->command("update producto set piezas = " + new_text + " where sku = " + std::to_string((*iter)[m_Columns_prod.sku]));
-                    (*iter)[m_Columns_prod.piezas] = std::stoi(new_text);
+                    (*iter)[m_Columns_prod.piezas] = new_text;
                     break;
                 }
                 case COLUMNS::ColumnProducto::PRECIO_U:
                 {
                     db->command("update producto set precio_u = " + new_text + " where sku = " + std::to_string((*iter)[m_Columns_prod.sku]));
                     (*iter)[m_Columns_prod.precio_u] = std::stod(new_text);
+                    break;
+                }
+                case COLUMNS::ColumnProducto::GRANEL:
+                {
+                    db->command("update producto set granel = " + std::to_string(!(*iter)[m_Columns_prod.granel].operator bool()) + " where sku = " + std::to_string((*iter)[m_Columns_prod.sku]));
+                    (*iter)[m_Columns_prod.granel] = !(*iter)[m_Columns_prod.granel].operator bool();
                     break;
                 }
                 case COLUMNS::ColumnProducto::CATEGORIA:
@@ -375,6 +384,22 @@ void Pos::init_popover_articulo()
     popover_ingreso_articulos.set_parent(*btn_add_piezas);
     btn_add_articulo_popover.set_label("Agregar");
     ety_articulo_popover.set_placeholder_text("Inserte el SKU del articulo");
+    
+    spin_cantiad_point.set_range(0, 100000);
+    spin_cantiad_point.set_increments(0.5, 10);
+    spin_cantiad_point.set_digits(2);
+    spin_cantiad_point.set_width_chars(5);
+    popover_cantidad_articulo.set_child(spin_cantiad_point);
+    popover_cantidad_articulo.set_position(Gtk::PositionType::BOTTOM);
+    popover_cantidad_articulo.set_parent(*ety_barras);
+
+    spin_precio_articulo.set_range(0, 100000);
+    spin_precio_articulo.set_increments(0.5, 10);
+    spin_precio_articulo.set_digits(2);
+    spin_precio_articulo.set_width_chars(5);
+    popover_precio_articulo.set_child(spin_precio_articulo);
+    popover_precio_articulo.set_position(Gtk::PositionType::BOTTOM);
+    popover_precio_articulo.set_parent(*ety_barras);
 }
 
 void Pos::add_btn_articulo_venta_popover()
@@ -402,7 +427,7 @@ void Pos::add_btn_articulo_venta_popover()
             {
                 if (row[m_Columns_prod.sku] == std::stoll(ety_articulo_popover.get_text()))
                 {
-                    row[m_Columns_prod.piezas] = (row[m_Columns_prod.piezas]) + spin_cantidad_articulo_popover.get_value_as_int();
+                    row[m_Columns_prod.piezas] = std::to_string(std::stof(row[m_Columns_prod.piezas].operator Glib::ustring()) + spin_cantidad_articulo_popover.get_value());
                     break;
                 }
             }

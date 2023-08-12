@@ -32,13 +32,10 @@
                       <object class="GtkEntry" id="ety_barras">
                         <property name="hexpand">true</property>
                         <property name="placeholder-text">Ingresa un Codigo de Barras.</property>
-                        <property name="primary-icon-name">input-keyboard-symbolic</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkButton">
-                        <property name="icon-name">document-page-setup-symbolic</property>
-                        <property name="tooltip-text">Venta en masa o menta por Granel.</property>
+                        <property name="primary-icon-name">edit-find-replace-symbolic</property>
+                        <property name="primary-icon-tooltip-text">Añadir con Cantidad Custom</property>
+                        <property name="secondary-icon-name">edit-paste-symbolic</property>
+                        <property name="secondary-icon-tooltip-text">Añadir con Précio Custom</property>
                       </object>
                     </child>
                   </object>
@@ -233,7 +230,7 @@
                     <property name="vexpand-set">true</property>
                     <child>
                       <object class="GtkTreeView" id="tree_prod">
-                        <property name="enable-grid-lines">2</property>
+                        <property name="enable-grid-lines">both</property>
                       </object>
                     </child>
                   </object>
