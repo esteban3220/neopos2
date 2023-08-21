@@ -179,7 +179,34 @@ void Pos::carga_señales()
     m_MenuPopup.set_has_arrow(false);
 
     btn_add_produ->signal_clicked().connect([this]()
-                                            {row_producto = *(m_refTreeModel_prod->append()); lbl_cont_prod->set_text("Productos: " + std::to_string(++cont_prod)); });
+                                            {
+                                                try{
+                                                row_producto = *(m_refTreeModel_prod->append()); 
+                                                row_producto[m_Columns_prod.sku] = cont_prod + 9;
+                                                db->command("insert into producto (sku) values (" + std::to_string(row_producto[m_Columns_prod.sku]) + ")");
+                                                lbl_cont_prod->set_text("Productos: " + std::to_string(++cont_prod)); 
+                                                }catch(std::exception &e){
+                                                    try{
+                                                    std::cout << e.what() << std::endl;
+                                                    auto row_size = m_refTreeModel_prod->children().size() - 1;
+                                                    m_refTreeModel_prod->erase(m_refTreeModel_prod->get_iter(std::to_string(row_size)));
+
+                                                    row_producto = *(m_refTreeModel_prod->append());
+                                                    row_producto[m_Columns_prod.sku] = cont_prod + 101;
+                                                    db->command("insert into producto (sku) values (" + std::to_string(row_producto[m_Columns_prod.sku]) + ")");
+                                                    lbl_cont_prod->set_text("Productos: " + std::to_string(++cont_prod));
+                                                    }
+                                                    catch(std::exception &e){
+                                                        std::cout << e.what() << std::endl;
+                                                        auto row_size = m_refTreeModel_prod->children().size() - 1;
+                                                        m_refTreeModel_prod->erase(m_refTreeModel_prod->get_iter(std::to_string(row_size)));
+
+                                                        row_producto = *(m_refTreeModel_prod->append());
+                                                        lbl_cont_prod->set_text("Productos: " + std::to_string(++cont_prod));
+                                                    }
+                                                }
+                                            });
+
     cell_sku->signal_edited().connect([this](const Glib::ustring &path_string, const Glib::ustring &new_text)
                                       {dialog.reset(new Gtk::MessageDialog(*this, "Editar", false, Gtk::MessageType::QUESTION, Gtk::ButtonsType::OK_CANCEL, true));
                                         dialog->set_secondary_text("¿Desea editar el campo?");

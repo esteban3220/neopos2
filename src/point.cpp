@@ -141,7 +141,7 @@ void Pos::on_btn_pago_efectivo_clicked()
     remove("temp.txt");
 
     db->command(
-      "INSERT INTO venta VALUES (" + std::to_string(id) + ",'" + tipo + "', " + std::to_string(total_vcarrito) + ", " + spin_ingreso->get_text() + " , " + lbl_cambio->get_text().substr(1, lbl_cambio->get_text().size()) + ",'" + folio_tarjetaa.str() + "' , datetime('now','localtime') , '" + ss.str() + "');");
+      "INSERT INTO venta VALUES (" + std::to_string(id) + ",'" + tipo + "', " + std::to_string(total_vcarrito) + ", " + spin_ingreso->get_text() + ", " +  std::to_string(std::stof(lbl_cambio->get_text().substr(1, lbl_cambio->get_text().size()))) + ",'" + folio_tarjetaa.str() + "' , datetime('now','localtime') , '" + ss.str() + "');");
 
     row_reporte = *(m_refTreeModel_reporte->prepend());
     row_reporte[m_Columns_reporte.id] = id;
