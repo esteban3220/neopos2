@@ -248,10 +248,11 @@ void Pos::on_btn_remove_prod_clicked()
                 if (iter) {
                     db->command("delete from producto where sku = " + std::to_string((*iter)[m_Columns_prod.sku]));
                     m_refTreeModel_prod->erase(iter);
-                    lbl_cont_prod->set_text("Productos: " + std::to_string(m_refTreeModel_prod->children().size()));
+                    lbl_cont_prod->set_text("Productos: " + std::to_string(--cont_prod));
                 }
             }
-            dialog->close(); });
+            dialog->close(); 
+        });
     dialog->show();
 }
 
