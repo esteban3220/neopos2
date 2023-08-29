@@ -3,7 +3,6 @@
 #include <iostream>
 #include <vector>
 
-std::vector<std::vector<std::string>> result;
 
 class SQLite
 {
@@ -21,4 +20,5 @@ public:
     void command(std::string);
     int get_rc() const;
     std::vector<std::vector<std::string>> get_result() const;
+    void clear_result();
 };

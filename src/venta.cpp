@@ -1,4 +1,3 @@
-#pragma once
 
 #include "Pos.hpp"
 
@@ -29,7 +28,7 @@ void Pos::init_reporte()
         row_reporte[m_Columns_reporte.fecha] = db->get_result()[i][6];
         row_reporte[m_Columns_reporte.datos] = db->get_result()[i][7];
     }
-    result.clear();
+    db->clear_result();
 }
 
 void Pos::init_detalle_venta()
@@ -84,39 +83,39 @@ void Pos::on_popup_button_pressed(int /* n_press */, double x, double y)
 void Pos::act_dashboard(){
     db->command("SELECT sum(total) FROM venta WHERE strftime('%Y-%m', fecha) = strftime('%Y-%m', 'now');");
     lbl_venta_mes->set_markup("$<span font_desc='50'>" + db->get_result()[0][0] + "</span>");
-    result.clear();
+    db->clear_result();
 
     db->command("SELECT sum(total) FROM venta WHERE strftime('%Y-%m-%d', fecha) = strftime('%Y-%m-%d', 'now');");
     lbl_venta_dia->set_markup("$<span font_desc='50'>" + db->get_result()[0][0] + "</span>");
-    result.clear();
+    db->clear_result();
 
     db->command("SELECT count(*) FROM venta WHERE strftime('%Y-%m-%d', fecha) = strftime('%Y-%m-%d', 'now');");
     lbl_clientes_dia->set_markup("<span font_desc='50'>" + db->get_result()[0][0] + "</span>");
-    result.clear();
+    db->clear_result();
 
     db->command("SELECT min(total) FROM venta WHERE strftime('%Y-%m', fecha) = strftime('%Y-%m', 'now')");
     lbl_venta_min_mes->set_markup("$<span font_desc='50'>" + db->get_result()[0][0] + "</span>");
-    result.clear();
+    db->clear_result();
 
     db->command("SELECT max(total) FROM venta WHERE strftime('%Y-%m', fecha) = strftime('%Y-%m', 'now')");
     lbl_venta_max_mes->set_markup("$<span font_desc='50'>" + db->get_result()[0][0] + "</span>");
-    result.clear();
+    db->clear_result();
 
     db->command("SELECT SUM(total) AS TotalVentas FROM venta WHERE strftime('%Y', fecha) = strftime('%Y', 'now')");
     lbl_venta_anio->set_markup("$<span font_desc='50'>" + db->get_result()[0][0] + "</span>");
-    result.clear();
+    db->clear_result();
 
     db->command("SELECT min(total) AS TotalVentas FROM venta WHERE strftime('%Y-%m', fecha) = strftime('%Y-%m', 'now')");
     lbl_venta_min_anio->set_markup("$<span font_desc='50'>" + db->get_result()[0][0] + "</span>");
-    result.clear();
+    db->clear_result();
 
     db->command("SELECT max(total) AS TotalVentas FROM venta WHERE strftime('%Y-%m', fecha) = strftime('%Y-%m', 'now')");
     lbl_venta_max_anio->set_markup("$<span font_desc='50'>" + db->get_result()[0][0] + "</span>");
-    result.clear();
+    db->clear_result();
 
     db->command("SELECT SUM(total) AS TotalVentas FROM venta WHERE strftime('%Y', Fecha) = strftime('%Y', 'now', '-1 year')");
     lbl_venta_anio_anterior->set_markup("$<span font_desc='50'>" + (db->get_result()[0][0] == "NULL" ? "0" : db->get_result()[0][0]) + "</span>");
-    result.clear();
+    db->clear_result();
 }
 
 void Pos::on_menu_file_popup_generic()

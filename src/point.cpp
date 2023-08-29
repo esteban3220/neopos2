@@ -1,5 +1,3 @@
-#pragma once
-
 #include "Pos.hpp"
 #include "columns.hpp"
 #include <cmath>
@@ -59,7 +57,7 @@ void Pos::on_btn_pago_efectivo_clicked()
       << "\n";
     ticket << "No. Ticket: " << id << "\n\n";
     if (vec_check[4]->get_active())
-      true;
+      //true;
     // ticket << std::left << std::setw (10) << "Le atendió: "
     //               << "Juan Perez"
     //               << "\n\n"

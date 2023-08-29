@@ -599,7 +599,7 @@ Pos::initconf ()
       vec_check[i]->set_active (std::stoi (db->get_result ()[0][i]));
     }
 	
-  result.clear ();
+  db->clear_result();
 
   db->command ("SELECT * FROM data_conf");
   ety_conf_razon->set_text (db->get_result ()[0][0]);
@@ -608,7 +608,7 @@ Pos::initconf ()
   ety_conf_contacto->set_text (db->get_result ()[0][3]);
   ety_conf_thanks->set_text (db->get_result ()[0][4]);
 
-  result.clear ();
+  db->clear_result();
 }
 
 void

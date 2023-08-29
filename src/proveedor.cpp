@@ -1,10 +1,7 @@
-#pragma once
+// File: proveedor.cpp
 
 #include "Pos.hpp"
-#include "producto.cpp"
-#include "point.cpp"
 #include "columns.hpp"
-#include "venta.cpp"
 #include "config.cpp"
 #include <string>
 
@@ -63,7 +60,7 @@ Pos::Pos(const Glib::RefPtr<Gtk::Application>& app)
 
     db->command ("SELECT * FROM conf");
     impresion_act->change_state((bool) std::stoi(db->get_result()[0][6]));
-    result.clear ();
+    db->clear_result();
 
     refActionGroup->add_action("config.ticket",[=](){window_conf_ticket->show();});
     insert_action_group("popupmain", refActionGroup);
@@ -312,23 +309,22 @@ void Pos::init()
     cell4->property_editable() = true;
 
     db->command("SELECT * FROM proveedor");
-    result = db->get_result();
 
     m_refTreeModelCombo = Gtk::ListStore::create(m_ColumnsCombo);
     auto iter_ = Gtk::TreeModel::iterator();
 
-    for (int i = 0; i < result.size(); i++)
+    for (int i = 0; i < db->get_result().size(); i++)
     {
         row = *(m_refTreeModel->append());
-        row[m_Columns.id] = std::stol(result[i][0]);
-        row[m_Columns.m_col_name] = result[i][1];
-        row[m_Columns.numero] = result[i][2];
-        row[m_Columns.empresa] = result[i][3];
-        row[m_Columns.correo] = result[i][4];
+        row[m_Columns.id] = std::stol(db->get_result()[i][0]);
+        row[m_Columns.m_col_name] = db->get_result()[i][1];
+        row[m_Columns.numero] = db->get_result()[i][2];
+        row[m_Columns.empresa] = db->get_result()[i][3];
+        row[m_Columns.correo] = db->get_result()[i][4];
         iter_ = m_refTreeModelCombo->append();
-        (*iter_)[m_ColumnsCombo.m_col_name] = result[i][3];
+        (*iter_)[m_ColumnsCombo.m_col_name] = db->get_result()[i][3];
     }
-    result.clear();
+    db->clear_result();
 
     tree_prov->set_search_column(m_Columns.m_col_name);
     tree_prov->set_enable_search(true);

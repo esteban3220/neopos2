@@ -71,6 +71,14 @@
         "any": "cpp",
         "complex": "cpp",
         "source_location": "cpp",
-        "typeindex": "cpp"
+        "typeindex": "cpp",
+        "*.ipp": "cpp",
+        "csignal": "cpp",
+        "strstream": "cpp",
+        "bitset": "cpp",
+        "cfenv": "cpp",
+        "codecvt": "cpp",
+        "ranges": "cpp",
+        "shared_mutex": "cpp"
     }
 }

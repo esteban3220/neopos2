@@ -1,17 +1,4 @@
-#ifndef BUILDER_HPP
-#define BUILDER_HPP
-
-#include <gtkmm.h>
-#include <iostream>
-
-class Builder
-{
-public:
-    Builder();
-    Builder(std::string glade_file);
-    ~Builder();
-    Glib::RefPtr<Gtk::Builder> m_refBuilder;    
-};
+#include "builder.hpp"
 
 Builder::Builder()
 {
@@ -57,5 +44,3 @@ Builder::~Builder()
 {
     std::cout << "Builder destroyed" << std::endl;
 }
-
-#endif //BUILDER_HPP

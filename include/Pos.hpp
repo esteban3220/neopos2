@@ -1,11 +1,11 @@
-#ifndef POS_HPP
-#define POS_HPP
+#pragma once
+
 #include "builder.hpp"
 #include <memory>
 #include <iostream>
 #include <map>
 #include <vector>
-#include "sqlite.cpp"
+#include "sqlite.hpp"
 #include <sstream>
 #include <map>
 
@@ -345,5 +345,3 @@ public:
     Pos(const Glib::RefPtr<Gtk::Application>& app);
     ~Pos() {m_MenuPopup.unparent(); m_MenuPopup_main.unparent(); popover_ingreso_articulos.unparent(); popover_precio_articulo.unparent(); popover_cantidad_articulo.unparent();}
 };
-
-#endif // POS_HPP

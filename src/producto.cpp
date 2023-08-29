@@ -1,4 +1,3 @@
-#pragma once
 
 #include "Pos.hpp"
 #include "columns.hpp"
@@ -111,28 +110,31 @@ void Pos::init_producto()
     cell_precio_u->property_digits() = 2;
 
     // Add some data:
+    db->clear_result();
     db->command("SELECT * FROM producto");
-    result = db->get_result();
 
-    for (int i = 0; i < result.size(); i++)
+    std::cout << "atm: " << db->get_result().size() << std::endl;
+
+    for (int i = 0; i < db->get_result().size(); i++)
     {
+
         row_producto = *(m_refTreeModel_prod->append());
-        row_producto[m_Columns_prod.sku] = std::stoll(result[i][0]);
-        row_producto[m_Columns_prod.nombre] = result[i][1];
-        row_producto[m_Columns_prod.caducidad] = result[i][2];
-        row_producto[m_Columns_prod.marca] = result[i][3];
-        cell_marca->property_placeholder_text() = result[i][3];
-        row_producto[m_Columns_prod.nota] = result[i][4];
-        row_producto[m_Columns_prod.piezas] = result[i][5] == "NULL" ? "0" : result[i][5];
-        row_producto[m_Columns_prod.precio_u] = result[i][6] == "NULL" ? 0 : std::stod(result[i][6]);
-        row_producto[m_Columns_prod.categoria] = result[i][7];
-        cell_categoria->property_placeholder_text() = result[i][7];
-        row_producto[m_Columns_prod.subcategoria] = result[i][8];
-        row_producto[m_Columns_prod.granel] = result[i][9] == "1" ? true : false;
+        row_producto[m_Columns_prod.sku] = std::stoll(db->get_result()[i][0]);
+        row_producto[m_Columns_prod.nombre] = db->get_result()[i][1];
+        row_producto[m_Columns_prod.caducidad] = db->get_result()[i][2];
+        row_producto[m_Columns_prod.marca] = db->get_result()[i][3];
+        cell_marca->property_placeholder_text() = db->get_result()[i][3];
+        row_producto[m_Columns_prod.nota] = db->get_result()[i][4];
+        row_producto[m_Columns_prod.piezas] = db->get_result()[i][5] == "NULL" ? "0" : db->get_result()[i][5];
+        row_producto[m_Columns_prod.precio_u] = db->get_result()[i][6] == "NULL" ? 0 : std::stod(db->get_result()[i][6]);
+        row_producto[m_Columns_prod.categoria] = db->get_result()[i][7];
+        cell_categoria->property_placeholder_text() = db->get_result()[i][7];
+        row_producto[m_Columns_prod.subcategoria] = db->get_result()[i][8];
+        row_producto[m_Columns_prod.granel] = db->get_result()[i][9] == "1" ? true : false;
     }
-
-    result.clear();
-
+    std::cout << "Subcate: " << subcategoria_map.size() << std::endl;
+    db->clear_result();
+    std::cout << "Subcate: " << subcategoria_map.size() << std::endl;
     cont_prod = m_refTreeModel_prod->children().size();
     lbl_cont_prod->set_text("Productos: " + std::to_string(cont_prod));
 }
@@ -243,9 +245,11 @@ void Pos::on_btn_remove_prod_clicked()
     dialog->add_button("Eliminar", Gtk::ResponseType::OK)->set_css_classes({ "destructive-action" });
     dialog->signal_response().connect([this](int response)
         {
-            if (response == Gtk::ResponseType::OK) {
+            if (response == Gtk::ResponseType::OK) 
+            {
                 auto iter = tree_prod->get_selection()->get_selected();
-                if (iter) {
+                if (iter) 
+                {
                     db->command("delete from producto where sku = " + std::to_string((*iter)[m_Columns_prod.sku]));
                     m_refTreeModel_prod->erase(iter);
                     lbl_cont_prod->set_text("Productos: " + std::to_string(--cont_prod));
@@ -449,7 +453,7 @@ void Pos::add_btn_articulo_venta_popover()
 
 void Pos::llena_subca()
 {
-
+    std::cout << "Subcate: " << subcategoria_map.size() << std::endl;
     const char* aba[] = {
         "Aceite comestibles",
         "Aderezos",
