@@ -2,7 +2,6 @@
 
 #include "Pos.hpp"
 #include "columns.hpp"
-#include "config.cpp"
 #include <string>
 
 Pos::Pos(const Glib::RefPtr<Gtk::Application>& app): builder(std::make_unique<Builder>("<interface>"

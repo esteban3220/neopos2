@@ -13,6 +13,7 @@ find_library(SQLITE3_LIBRARY sqlite3 REQUIRED)
 include_directories(${CMAKE_CURRENT_LIST_DIR}/include)
 
 add_executable(NeoPos 
+    src/config.cpp
     src/builder.cpp
     src/main.cpp
     src/point.cpp
