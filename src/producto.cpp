@@ -48,6 +48,7 @@ void Pos::init_producto()
     col_subcategoria->add_attribute(cell_subcategoria->property_text(), m_Columns_prod.subcategoria);
 
     col_precio_u->set_cell_data_func(*cell_precio_u, sigc::mem_fun(*this, &Pos::on_cell_data_func_u));
+    col_piezas->set_cell_data_func(*cell_piezas, sigc::mem_fun(*this, &Pos::on_cell_data_piezas));
 
     col_sku->pack_start(*cell_sku);
     col_nombre->pack_start(*cell_nombre);
@@ -125,7 +126,7 @@ void Pos::init_producto()
         row_producto[m_Columns_prod.marca] = db->get_result()[i][3];
         cell_marca->property_placeholder_text() = db->get_result()[i][3];
         row_producto[m_Columns_prod.nota] = db->get_result()[i][4];
-        row_producto[m_Columns_prod.piezas] = db->get_result()[i][5] == "NULL" ? "0" : db->get_result()[i][5];
+        row_producto[m_Columns_prod.piezas] = db->get_result()[i][5] == "NULL" ? 0 : std::stof(db->get_result()[i][5]);
         row_producto[m_Columns_prod.precio_u] = db->get_result()[i][6] == "NULL" ? 0 : std::stod(db->get_result()[i][6]);
         row_producto[m_Columns_prod.categoria] = db->get_result()[i][7];
         cell_categoria->property_placeholder_text() = db->get_result()[i][7];
@@ -238,6 +239,17 @@ void Pos::on_cell_data_func_u(Gtk::CellRenderer* renderer, const Gtk::TreeModel:
     }
 }
 
+void Pos::on_cell_data_piezas(Gtk::CellRenderer* renderer, const Gtk::TreeModel::const_iterator& iter)
+{
+    if (iter)
+    {
+        double value = (*iter)[m_Columns_prod.piezas];
+        char buffer[32];
+        sprintf(buffer, "%.3f", value);
+        cell_piezas->property_text() = buffer;
+    }
+}
+
 void Pos::on_btn_remove_prod_clicked()
 {
     dialog.reset(new Gtk::MessageDialog(*this, "Eliminar", true, Gtk::MessageType::QUESTION, Gtk::ButtonsType::CANCEL, true));
@@ -319,7 +331,7 @@ void Pos::on_produ_dialog_edit_response(int response_id, const Glib::ustring& pa
                 case COLUMNS::ColumnProducto::PIEZAS:
                 {
                     db->command("update producto set piezas = " + new_text + " where sku = " + std::to_string((*iter)[m_Columns_prod.sku]));
-                    (*iter)[m_Columns_prod.piezas] = new_text;
+                    (*iter)[m_Columns_prod.piezas] = std::stof(new_text);
                     break;
                 }
                 case COLUMNS::ColumnProducto::PRECIO_U:
@@ -433,7 +445,7 @@ void Pos::add_btn_articulo_venta_popover()
                 if (row[m_Columns_prod.sku] == std::stoll(ety_articulo_popover.get_text()))
                 {
                     std::cout << "Piezas:" << row[m_Columns_prod.piezas] << std::endl;
-                    row[m_Columns_prod.piezas] = std::to_string(std::stof(row[m_Columns_prod.piezas] == "" ? "0" : row[m_Columns_prod.piezas].operator Glib::ustring()) + spin_cantidad_articulo_popover.get_value());
+                    row[m_Columns_prod.piezas] = (row[m_Columns_prod.piezas].operator float() + spin_cantidad_articulo_popover.get_value());
                     break;
                 }
             }

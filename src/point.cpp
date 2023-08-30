@@ -81,11 +81,11 @@ void Pos::on_btn_pago_efectivo_clicked()
       {
         if (row[m_Columns_venta.sku] == row_prod[m_Columns_prod.sku])
         {
-          float diff = std::stof(row_prod[m_Columns_prod.piezas].operator Glib::ustring()) - row[m_Columns_venta.cantidad];
+          float diff = row_prod[m_Columns_prod.piezas].operator float() - row[m_Columns_venta.cantidad];
           if (diff >= 0)
             db->command(
               "UPDATE producto SET piezas = " + std::to_string(diff) + " WHERE sku = " + std::to_string(row_prod[m_Columns_prod.sku]) + ";");
-          row_prod[m_Columns_prod.piezas] = std::to_string(diff);
+          row_prod[m_Columns_prod.piezas] = diff;
           break;
         }
       }

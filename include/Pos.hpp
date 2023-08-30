@@ -81,7 +81,8 @@ private:
     void on_cell_subcategoria_changed(int response_id, const Glib::ustring &path_string, const Gtk::TreeModel::iterator &);
 
     void on_cell_data_func_u(Gtk::CellRenderer *renderer, const Gtk::TreeModel::const_iterator &iter);
-    void on_cell_data_func_c(Gtk::CellRenderer *renderer, const Gtk::TreeModel::const_iterator &iter);
+    //void on_cell_data_func_c(Gtk::CellRenderer *renderer, const Gtk::TreeModel::const_iterator &iter);
+    void on_cell_data_piezas(Gtk::CellRenderer *renderer, const Gtk::TreeModel::const_iterator &iter);
 
     Gtk::TreeView *tree_prov, *tree_venta, *tree_repor, *tree_detalle_venta;
     Gtk::Label *lbl_cont_prod, *lbl_con_prov;
@@ -117,7 +118,7 @@ private:
         Gtk::TreeModelColumn<Glib::ustring> caducidad;
         Gtk::TreeModelColumn<Glib::ustring> marca;
         Gtk::TreeModelColumn<Glib::ustring> nota;
-        Gtk::TreeModelColumn<Glib::ustring> piezas;
+        Gtk::TreeModelColumn<float> piezas;
         Gtk::TreeModelColumn<float> precio_u;
         Gtk::TreeModelColumn<bool> granel;
         Gtk::TreeModelColumn<Glib::ustring> categoria;

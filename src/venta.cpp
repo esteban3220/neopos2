@@ -149,9 +149,9 @@ void Pos::on_menu_file_popup_generic()
                                 std::cout << tokens[0] << std::endl;
                                 for (auto i : m_refTreeModel_prod->children()){
                                     if(i[m_Columns_prod.sku] == std::stoll(tokens[0])){
-                                        auto a = std::stof(i[m_Columns_prod.piezas].operator Glib::ustring()) + std::stof(tokens[1]);
+                                        auto a = i[m_Columns_prod.piezas].operator float() + std::stof(tokens[1]);
                                         db->command("UPDATE producto SET piezas = " + std::to_string(a) + " WHERE sku = " + std::to_string(std::stoll(tokens[0])));
-                                        (i)[m_Columns_prod.piezas] = std::to_string(a) ;
+                                        (i)[m_Columns_prod.piezas] = a;
                                         break;
                                     }
                                 }
