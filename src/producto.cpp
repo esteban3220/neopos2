@@ -432,15 +432,15 @@ void Pos::add_btn_articulo_venta_popover()
             {
                 if (row[m_Columns_prod.sku] == std::stoll(ety_articulo_popover.get_text()))
                 {
-                    row[m_Columns_prod.piezas] = std::to_string(std::stof(row[m_Columns_prod.piezas].operator Glib::ustring()) + spin_cantidad_articulo_popover.get_value());
+                    std::cout << "Piezas:" << row[m_Columns_prod.piezas] << std::endl;
+                    row[m_Columns_prod.piezas] = std::to_string(std::stof(row[m_Columns_prod.piezas] == "" ? "0" : row[m_Columns_prod.piezas].operator Glib::ustring()) + spin_cantidad_articulo_popover.get_value());
                     break;
                 }
             }
             ety_articulo_popover.set_text("");
             lbl_articulo_popover.set_text("");
             spin_cantidad_articulo_popover.set_value(0);
-        }
-            else if (response == Gtk::ResponseType::NO)
+        }else if (response == Gtk::ResponseType::NO)
         {
             dialog->close();
         }
