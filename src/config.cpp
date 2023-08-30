@@ -1,5 +1,3 @@
-#pragma once
-
 #include "Pos.hpp"
 #include <fstream>
 #include <iomanip>
