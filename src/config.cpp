@@ -5,8 +5,7 @@
 #include <iomanip>
 #include <iostream>
 
-void
-Pos::init_config_ticket ()
+void Pos::init_config_ticket ()
 {
   std::string xml = "<interface>"
           "<object class=\"GtkWindow\" id=\"window_conf_ticket\">"
@@ -440,28 +439,17 @@ Pos::init_config_ticket ()
     {
       std::cerr << "building toolbar failed: " << ex.what ();
     }
-  window_conf_ticket
-      = builder_config_ticket_->get_widget<Gtk::Window> ("window_conf_ticket");
-  list_config_visualizacion
-      = builder_config_ticket_->get_widget<Gtk::ListBox> (
-          "list_config_visualizacion");
-  list_config_datos
-      = builder_config_ticket_->get_widget<Gtk::ListBox> ("list_config_datos");
-  list_config_test
-      = builder_config_ticket_->get_widget<Gtk::ListBox> ("list_config_test");
-  text_ticket
-      = builder_config_ticket_->get_widget<Gtk::TextView> ("text_ticket");
+  window_conf_ticket = builder_config_ticket_->get_widget<Gtk::Window> ("window_conf_ticket");
+  list_config_visualizacion = builder_config_ticket_->get_widget<Gtk::ListBox> ( "list_config_visualizacion");
+  list_config_datos = builder_config_ticket_->get_widget<Gtk::ListBox> ("list_config_datos");
+  list_config_test = builder_config_ticket_->get_widget<Gtk::ListBox> ("list_config_test");
+  text_ticket = builder_config_ticket_->get_widget<Gtk::TextView> ("text_ticket");
 
-  ety_conf_razon
-      = builder_config_ticket_->get_widget<Gtk::Entry> ("ety_conf_razon");
-  ety_conf_rfc
-      = builder_config_ticket_->get_widget<Gtk::Entry> ("ety_conf_rfc");
-  ety_conf_direccion
-      = builder_config_ticket_->get_widget<Gtk::Entry> ("ety_conf_direccion");
-  ety_conf_contacto
-      = builder_config_ticket_->get_widget<Gtk::Entry> ("ety_conf_contacto");
-  ety_conf_thanks
-      = builder_config_ticket_->get_widget<Gtk::Entry> ("ety_conf_thanks");
+  ety_conf_razon = builder_config_ticket_->get_widget<Gtk::Entry> ("ety_conf_razon");
+  ety_conf_rfc = builder_config_ticket_->get_widget<Gtk::Entry> ("ety_conf_rfc");
+  ety_conf_direccion = builder_config_ticket_->get_widget<Gtk::Entry> ("ety_conf_direccion");
+  ety_conf_contacto = builder_config_ticket_->get_widget<Gtk::Entry> ("ety_conf_contacto");
+  ety_conf_thanks = builder_config_ticket_->get_widget<Gtk::Entry> ("ety_conf_thanks");
 
   for (int i = 0; i < 6; i++)
     {

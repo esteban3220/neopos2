@@ -7,7 +7,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTKMM gtkmm-4.0)
-find_package(SQLite3 REQUIRED) 
+find_package(SQLite3 REQUIRED)
+find_library(SQLITE3_LIBRARY sqlite3 REQUIRED)
 
 include_directories(${CMAKE_CURRENT_LIST_DIR}/include)
 
