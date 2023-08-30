@@ -24,7 +24,7 @@ Builder::Builder(std::string glade_file)
 {
     try
     {
-        m_refBuilder = Gtk::Builder::create_from_file(glade_file);
+        m_refBuilder = Gtk::Builder::create_from_string(glade_file);
     }
     catch (const Glib::FileError &ex)
     {

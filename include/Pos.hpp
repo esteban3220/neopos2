@@ -13,7 +13,7 @@ class Pos : public Gtk::Window
 {
 private:
     /* data */
-    std::unique_ptr<Builder> builder = std::make_unique<Builder>("../test/mainpos.ui");
+    std::unique_ptr<Builder> builder ;
     void cargar_glade();
     void init();
     void init_producto();
