@@ -299,12 +299,12 @@ void Pos::on_spin_ingreso_changed()
     << (float)spin_ingreso->get_value() - total_vcarrito;
   if (std::stof(ss.str()) < 0)
   {
-    lbl_cambio->set_markup("$<span font_desc='50' foreground='red'>" + ss.str() + "</span>");
+    lbl_cambio->set_markup("$<span font_desc='30' foreground='red'>" + ss.str() + "</span>");
     btn_pago_efectivo->set_sensitive(false);
   }
   else
   {
-    lbl_cambio->set_markup("$<span font_desc='50'>" + ss.str() + "</span>");
+    lbl_cambio->set_markup("$<span font_desc='30'>" + ss.str() + "</span>");
     btn_pago_efectivo->set_sensitive(true);
   }
 }
