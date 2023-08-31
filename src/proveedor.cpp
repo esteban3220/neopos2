@@ -337,7 +337,6 @@ Pos::Pos(const Glib::RefPtr<Gtk::Application>& app): builder(std::make_unique<Bu
                         "</child>"
                         "<child>"
                           "<object class=\"GtkFrame\">"
-                            "<property name=\"label\">Detalles</property>"
                             "<property name=\"width-request\">450</property>"
                             "<child>"
                               "<object class=\"GtkScrolledWindow\">"
